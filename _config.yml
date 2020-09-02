@@ -2,3 +2,5 @@ theme: jekyll-theme-cayman
 title: Welcome to AAYUSH's Github homepage
 discription: Feel free to bookmark this to keep an eye on my project updates
 remote_theme: hydecorp/hydejack@v9.0.4
+plugins:
+  - jekyll-include-cache
