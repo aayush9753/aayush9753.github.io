@@ -32,8 +32,8 @@ class MarkdownRenderer {
       // Ordered lists need special handling
       // Unordered lists need special handling
       
-      // Code blocks
-      { pattern: /```([^`]+)```/g, replacement: '<pre><code>$1</code></pre>' },
+      // Code blocks (multiline)
+      { pattern: /```([\s\S]+?)```/g, replacement: '<pre><code>$1</code></pre>' },
       { pattern: /`([^`]+)`/g, replacement: '<code>$1</code>' },
       
       // Horizontal rule

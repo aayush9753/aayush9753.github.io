@@ -116,24 +116,48 @@ class DataStorage {
   }
   
   /**
+   * Generate a cryptographically-random ID (with graceful fallback)
+   */
+  generateId(prefix = 'id') {
+    let unique;
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+      unique = crypto.randomUUID();
+    } else {
+      // Fallback: timestamp + random suffix
+      unique = Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
+    }
+    return `${prefix}-${unique}`;
+  }
+
+  /**
+   * Create a readable yet unique slug from a title
+   */
+  generateSlug(title) {
+    const base = (title || 'post')
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, '') // keep alphanum, underscore, dash, space
+      .replace(/\s+/g, '-');
+
+    const hash = Date.now().toString(36).slice(-4);
+    return `${base}-${hash}`;
+  }
+
+  /**
    * Add a new post
    */
   addPost(post) {
-    // Generate ID if not provided
+    // Generate a stable id if missing
     if (!post.id) {
-      post.id = 'post-' + (this.posts.length + 1);
+      post.id = this.generateId('post');
     }
-    
-    // Set a default URL if not provided
+
+    // Generate a unique-ish URL/slug if missing or placeholder
     if (!post.url || post.url === '#') {
-      // Create a URL-friendly slug from the title
-      const slug = post.title
-        .toLowerCase()
-        .replace(/[^\w\s]/g, '')
-        .replace(/\s+/g, '-');
+      const slug = this.generateSlug(post.title);
       post.url = `posts/${slug}.html`;
     }
-    
+
     this.posts.push(post);
     this.savePosts();
     return post;
@@ -145,7 +169,7 @@ class DataStorage {
   saveDraft(draft) {
     // Generate ID if not provided
     if (!draft.id) {
-      draft.id = 'draft-' + (this.drafts.length + 1);
+      draft.id = this.generateId('draft');
     }
     
     // Check if this draft already exists

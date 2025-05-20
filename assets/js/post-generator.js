@@ -66,53 +66,65 @@ class PostGenerator {
       return null;
     }
     
-    // Replace template placeholders with post data
-    let html = this.templateHtml;
-    
-    // Title
-    html = html.replace(/<title>.*?<\/title>/, `<title>${post.title} - MyCave</title>`);
-    
-    // Meta description
-    const description = post.content.length > 150 ? post.content.substring(0, 147) + '...' : post.content;
-    html = html.replace(/<meta name="description" content=".*?">/, `<meta name="description" content="${description}">`);
-    
-    // Post header
-    html = html.replace(/<h1>.*?<\/h1>/, `<h1>${post.title}</h1>`);
-    
-    // Post meta
-    const tagsHtml = post.tags.map(tag => `<span class="tag">${tag}</span>`).join('\n            ');
-    const subtagsHtml = post.subtags ? post.subtags.map(subtag => `<span class="subtag">${subtag}</span>`).join('\n            ') : '';
-    
-    html = html.replace(
-      /<span class="date">.*?<\/span>/,
-      `<span class="date">${post.date}</span>`
-    );
-    
-    html = html.replace(
-      /<div class="tags">[\s\S]*?<\/div>/,
-      `<div class="tags">
-            ${tagsHtml}
-            ${subtagsHtml}
-          </div>`
-    );
-    
-    // Post content
-    // Use markdown renderer to convert content to HTML
-    const contentHtml = typeof markdownRenderer !== 'undefined' 
-      ? markdownRenderer.render(post.content)
-      : post.content;
-    
-    html = html.replace(
-      /<div class="post-content">[\s\S]*?<\/div>/,
-      `<div class="post-content">
-          ${contentHtml}
-        </div>`
-    );
-    
-    // Previous/Next posts
-    // This would normally be dynamic based on post dates
-    
-    return html;
+    // Parse template into a DOM we can safely manipulate
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(this.templateHtml, 'text/html');
+
+    if (!doc) return null;
+
+    // <title>
+    doc.title = `${post.title} - MyCave`;
+
+    // <meta description>
+    const metaDesc = doc.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      const description = post.content.length > 150 ? post.content.substring(0, 147) + '...' : post.content;
+      metaDesc.setAttribute('content', description);
+    }
+
+    // Article elements
+    const article = doc.querySelector('article');
+    if (article) {
+      // Title inside post header
+      const headerTitle = article.querySelector('.post-header h1');
+      if (headerTitle) headerTitle.textContent = post.title;
+
+      // Date
+      const dateSpan = article.querySelector('.post-header .date');
+      if (dateSpan) dateSpan.textContent = post.date;
+
+      // Tags / Subtags
+      const tagsContainer = article.querySelector('.post-header .tags');
+      if (tagsContainer) {
+        tagsContainer.innerHTML = '';
+        post.tags.forEach(tag => {
+          const span = doc.createElement('span');
+          span.className = 'tag';
+          span.textContent = tag;
+          tagsContainer.appendChild(span);
+        });
+        if (post.subtags) {
+          post.subtags.forEach(sub => {
+            const span = doc.createElement('span');
+            span.className = 'subtag';
+            span.textContent = sub;
+            tagsContainer.appendChild(span);
+          });
+        }
+      }
+
+      // Content
+      const contentDiv = article.querySelector('.post-content');
+      if (contentDiv) {
+        const contentHtml = typeof markdownRenderer !== 'undefined'
+          ? markdownRenderer.render(post.content)
+          : post.content;
+        contentDiv.innerHTML = contentHtml;
+      }
+    }
+
+    // Serialize back to HTML string
+    return '<!DOCTYPE html>' + doc.documentElement.outerHTML;
   }
   
   /**
