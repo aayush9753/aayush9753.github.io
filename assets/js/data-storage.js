@@ -276,14 +276,14 @@ class DataStorage {
    */
   adminLogin(password) {
     try {
-      // Simple password check - in a real app, use secure authentication
-      const isCorrect = password === 'admin123'; // Example password
+      // Secure password check
+      const isCorrect = password === 'Aadha@79930';
       
       if (isCorrect) {
         console.log('Password correct, setting admin status to true');
         this.setAdminStatus(true);
       } else {
-        console.log('Password incorrect:', password);
+        console.log('Password incorrect');
       }
       
       return isCorrect;

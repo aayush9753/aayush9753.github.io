@@ -148,8 +148,30 @@
   </main>
 
   <footer>
-    <p>&copy; 2023 MyCave</p>
+    <p>&copy; 2025 MyCave</p>
   </footer>
+
+  <!-- Batman Secret Admin Button -->
+  <button id="batman-admin" aria-label="Secret Admin">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 60">
+      <path d="M 50,0 C 30,20 15,15 0,50 c 30,-10 70,-10 100,0 C 85,15 70,20 50,0 z" fill="#000000"/>
+    </svg>
+  </button>
+
+  <!-- Batman Admin Modal -->
+  <div id="batman-admin-modal">
+    <div class="batman-modal-content">
+      <h3>Secret Admin Access</h3>
+      <div class="form-group">
+        <label for="batman-password">Password:</label>
+        <input type="password" id="batman-password" placeholder="Enter secret password">
+      </div>
+      <div class="batman-modal-actions">
+        <button id="batman-login-btn" class="primary-btn">Login</button>
+        <button id="batman-close-btn" class="batman-close-btn">Cancel</button>
+      </div>
+    </div>
+  </div>
 
   <script src="assets/js/data-storage.js"></script>
   <script src="assets/js/markdown.js"></script>
@@ -157,5 +179,6 @@
   <script src="assets/js/post-generator.js"></script>
   <script src="assets/js/main.js"></script>
   <script src="assets/js/admin-panel.js"></script>
+  <script src="assets/js/batman-admin.js"></script>
 </body>
 </html>
