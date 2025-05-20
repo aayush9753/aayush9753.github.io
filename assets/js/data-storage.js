@@ -42,7 +42,7 @@ class DataStorage {
           date: '2023-06-30',
           tags: ['lifestyle', 'philosophy'],
           subtags: ['digital-minimalism', 'simplicity'],
-          content: 'Minimalism is more than an aesthetic choice; it's a mindset that prioritizes value over volume. By deliberately choosing what to include in our lives, we create space for what truly matters.',
+          content: "Minimalism is more than an aesthetic choice; it's a mindset that prioritizes value over volume. By deliberately choosing what to include in our lives, we create space for what truly matters.",
           url: '#'
         },
         {
@@ -51,7 +51,7 @@ class DataStorage {
           date: '2023-06-10',
           tags: ['productivity', 'tools'],
           subtags: ['markdown', 'text-files'],
-          content: 'Plain text systems offer surprising advantages for productivity: they're portable, future-proof, and distraction-free. By embracing the constraints of simple text files, we can focus on what matters: our thoughts and ideas.',
+          content: "Plain text systems offer surprising advantages for productivity: they're portable, future-proof, and distraction-free. By embracing the constraints of simple text files, we can focus on what matters: our thoughts and ideas.",
           url: '#'
         },
         {
@@ -324,5 +324,5 @@ class DataStorage {
   }
 }
 
-// Create a global instance
-const dataStorage = new DataStorage();
+// Create and export the dataStorage instance
+window.dataStorage = new DataStorage();
