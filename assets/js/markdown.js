@@ -76,27 +76,58 @@ class MarkdownRenderer {
    * Special handler for list items
    */
   processList(markdown) {
-    // Process unordered lists
-    let html = markdown.replace(/^[ \t]*[-*+] (.+)$/gm, '<li>$1</li>');
+    // Process unordered lists - add a data attribute to identify the list type
+    let html = markdown.replace(/^[ \t]*[-*+] (.+)$/gm, '<li data-list-type="ul">$1</li>');
     
-    // Wrap adjacent list items in ul tags
-    html = html.replace(/(<li>.+?<\/li>)\n(?=<li>)/g, '$1');
-    html = html.replace(/(<li>.+<\/li>)/g, '<ul>$1</ul>');
+    // Process ordered lists - add a data attribute to identify the list type
+    html = html.replace(/^[ \t]*(\d+)\. (.+)$/gm, '<li data-list-type="ol">$2</li>');
     
-    // Process ordered lists
-    html = html.replace(/^[ \t]*(\d+)\. (.+)$/gm, '<li>$2</li>');
+    // Find consecutive list items and group them
+    const lines = html.split('\n');
+    let result = [];
+    let currentListType = null;
+    let currentListItems = [];
     
-    // Wrap adjacent ordered list items in ol tags
-    html = html.replace(/(<li>.+?<\/li>)\n(?=<li>)/g, '$1');
-    html = html.replace(/(<li>.+<\/li>)/g, function(match) {
-      // Check if it's part of an ordered list
-      if (match.match(/\d+\./)) {
-        return '<ol>' + match + '</ol>';
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      const liMatch = line.match(/<li data-list-type=["'](ol|ul)["']/);
+      
+      if (liMatch) {
+        const listType = liMatch[1];
+        
+        // If this is the first list item or we're switching list types
+        if (currentListType === null || currentListType !== listType) {
+          // If we have accumulated list items, wrap and add them
+          if (currentListItems.length > 0) {
+            result.push(`<${currentListType}>${currentListItems.join('')}</${currentListType}>`);
+            currentListItems = [];
+          }
+          
+          // Start a new list
+          currentListType = listType;
+        }
+        
+        // Add the item (but remove the data attribute)
+        currentListItems.push(line.replace(/data-list-type=["'](ol|ul)["'] ?/g, ''));
+      } else {
+        // If we have accumulated list items, wrap and add them
+        if (currentListItems.length > 0) {
+          result.push(`<${currentListType}>${currentListItems.join('')}</${currentListType}>`);
+          currentListItems = [];
+          currentListType = null;
+        }
+        
+        // Add the non-list line
+        result.push(line);
       }
-      return match;
-    });
+    }
     
-    return html;
+    // Handle any remaining list items
+    if (currentListItems.length > 0) {
+      result.push(`<${currentListType}>${currentListItems.join('')}</${currentListType}>`);
+    }
+    
+    return result.join('\n');
   }
 }
 

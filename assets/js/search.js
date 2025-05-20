@@ -164,17 +164,35 @@ class SearchEngine {
         // Create a preview snippet
         let snippet = item.content;
         
+        // Clean the content from markdown formatting
+        const cleanContent = item.content
+          .replace(/[#*`_]/g, '') // Remove markdown formatting characters
+          .replace(/\[.*?\]\(.*?\)/g, '$1') // Replace markdown links with just the text
+          .replace(/\n+/g, ' '); // Replace newlines with spaces
+        
         // Find the first matching term occurrence for snippet
         const firstTerm = terms[0];
-        const index = item.content.toLowerCase().indexOf(firstTerm);
+        const index = cleanContent.toLowerCase().indexOf(firstTerm);
         
         if (index > 30) {
-          snippet = '...' + item.content.substring(index - 20);
+          snippet = '...' + cleanContent.substring(index - 20);
+        } else if (index !== -1) {
+          snippet = cleanContent.substring(0, Math.max(0, index + 100));
+        } else {
+          // If term not found in content, just use the beginning
+          snippet = cleanContent.substring(0, 150);
         }
         
+        // Always ensure reasonable length
         if (snippet.length > 150) {
           snippet = snippet.substring(0, 150) + '...';
         }
+        
+        // Highlight the matching terms
+        terms.forEach(term => {
+          const regex = new RegExp(`(${term})`, 'gi');
+          snippet = snippet.replace(regex, '<strong>$1</strong>');
+        });
         
         return {
           ...item,
@@ -203,7 +221,7 @@ class SearchEngine {
         <a href="${result.url}" class="search-result-title">${result.title}</a>
         <div class="search-result-meta">
           <span class="date">${result.date}</span>
-          <span class="tags">${result.tags.join(', ')}</span>
+          <span class="tags">${result.tags.join(', ')}${result.subtags ? ', ' + result.subtags.join(', ') : ''}</span>
         </div>
         <div class="search-result-snippet">${result.snippet}</div>
       `;

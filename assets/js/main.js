@@ -104,6 +104,7 @@ function renderDateView(posts) {
       <a href="${post.url}" class="post-title">${post.title}</a>
       <div class="tags">
         ${post.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+        ${post.subtags ? post.subtags.map(subtag => `<span class="subtag">${subtag}</span>`).join('') : ''}
       </div>
     `;
     
@@ -154,6 +155,9 @@ function renderTagView(posts) {
           <li>
             <span class="date">${post.date}</span>
             <a href="${post.url}" class="post-title">${post.title}</a>
+            <div class="tags">
+              ${post.subtags ? post.subtags.map(subtag => `<span class="subtag">${subtag}</span>`).join('') : ''}
+            </div>
           </li>
         `).join('')}
       </ul>
@@ -177,7 +181,7 @@ function renderSubtagView(posts) {
   // Get all unique subtags
   const allSubtags = new Set();
   posts.forEach(post => {
-    if (post.subtags) {
+    if (post.subtags && Array.isArray(post.subtags)) {
       post.subtags.forEach(subtag => allSubtags.add(subtag));
     }
   });
@@ -213,6 +217,9 @@ function renderSubtagView(posts) {
           <li>
             <span class="date">${post.date}</span>
             <a href="${post.url}" class="post-title">${post.title}</a>
+            <div class="tags">
+              ${post.tags ? post.tags.map(tag => `<span class="tag">${tag}</span>`).join('') : ''}
+            </div>
           </li>
         `).join('')}
       </ul>
@@ -320,6 +327,15 @@ function setupAdminPanel() {
       content: document.getElementById('post-content').value,
       isDraft: document.getElementById('post-draft').checked
     };
+    
+    // Ensure tags and subtags are valid arrays
+    if (!postData.tags || !Array.isArray(postData.tags)) {
+      postData.tags = [];
+    }
+    
+    if (!postData.subtags || !Array.isArray(postData.subtags)) {
+      postData.subtags = [];
+    }
     
     // Check if we're editing or creating
     const editId = this.dataset.editId;

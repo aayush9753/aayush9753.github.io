@@ -78,7 +78,12 @@ class PostGenerator {
     // <meta description>
     const metaDesc = doc.querySelector('meta[name="description"]');
     if (metaDesc) {
-      const description = post.content.length > 150 ? post.content.substring(0, 147) + '...' : post.content;
+      // Create a safe preview by removing markdown characters and limiting length
+      const plainText = post.content
+        .replace(/[#*`_]/g, '') // Remove markdown formatting characters
+        .replace(/\[.*?\]\(.*?\)/g, '$1'); // Replace markdown links with just the text
+      
+      const description = plainText.length > 150 ? plainText.substring(0, 147) + '...' : plainText;
       metaDesc.setAttribute('content', description);
     }
 
@@ -143,7 +148,13 @@ class PostGenerator {
       // In a real server-side implementation, this would write to a file
       // For demonstration, store in localStorage
       localStorage.setItem(`post-html-${post.id}`, html);
-      console.log(`Generated HTML for post: ${post.title}`);
+      
+      // Also store the URL to post mapping for easier navigation
+      const postUrls = JSON.parse(localStorage.getItem('post-urls') || '{}');
+      postUrls[post.url] = post.id;
+      localStorage.setItem('post-urls', JSON.stringify(postUrls));
+      
+      console.log(`Generated HTML for post: ${post.title} with URL: ${post.url}`);
       return true;
     }
     
