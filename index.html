@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>My Second Brain</title>
+  <title>MyCave</title>
   <link rel="stylesheet" href="assets/css/style.css">
   <meta name="description" content="A collection of thoughts, notes, and ideas">
 </head>
 <body>
   <header>
-    <h1>My Second Brain</h1>
+    <h1>MyCave</h1>
     <h2>A collection of thoughts, notes, and ideas</h2>
     <nav>
       <a href="index.html">Home</a> |
@@ -23,6 +23,7 @@
       <button id="date-view-btn" class="active">Date View</button>
       <button id="tag-view-btn">Tag View</button>
       <button id="subtag-view-btn">Subtag View</button>
+      <button id="admin-view-btn">Admin</button>
     </div>
 
     <!-- Date View (Default) -->
@@ -78,14 +79,23 @@
       <!-- Subtag sections will be dynamically generated -->
     </section>
 
-    <!-- Admin Panel (Hidden by default) -->
-    <section id="admin-panel" class="hidden">
+    <!-- Admin Panel -->
+    <section id="admin-panel" class="content-view">
       <h3>Admin Panel</h3>
       <div id="login-section">
-        <button id="login-btn">Login with Google</button>
+        <input type="password" id="admin-password" placeholder="Enter admin password">
+        <button id="login-btn">Login</button>
       </div>
       <div id="content-management" class="hidden">
         <button id="new-post-btn">Create New Post</button>
+        <div id="drafts-section">
+          <h4>Your Drafts</h4>
+          <!-- Drafts will be listed here -->
+        </div>
+        <div id="posts-section">
+          <h4>Manage Published Posts</h4>
+          <!-- Posts will be listed here -->
+        </div>
         <div id="post-form" class="hidden">
           <h4>Create/Edit Post</h4>
           <form id="post-editor">
@@ -126,7 +136,7 @@
   </main>
 
   <footer>
-    <p>&copy; 2023 My Second Brain</p>
+    <p>&copy; 2023 MyCave</p>
   </footer>
 
   <script src="assets/js/data-storage.js"></script>

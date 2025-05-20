@@ -1,5 +1,5 @@
 /**
- * Search Functionality for My Second Brain
+ * Search Functionality for MyCave
  * Provides client-side search across posts
  */
 
@@ -42,75 +42,78 @@ class SearchEngine {
       header.insertAdjacentHTML('beforeend', searchHTML);
       
       // Add CSS for the search elements
-      const style = document.createElement('style');
-      style.textContent = `
-        .search-container {
-          margin-top: var(--spacing-unit);
-          position: relative;
-        }
-        
-        #search-input {
-          width: 100%;
-          padding: calc(var(--spacing-unit) * 0.5);
-          border: 1px solid var(--border-color);
-          border-radius: 3px;
-          font-family: inherit;
-          font-size: var(--base-size);
-        }
-        
-        .search-results {
-          position: absolute;
-          top: 100%;
-          left: 0;
-          right: 0;
-          background-color: white;
-          border: 1px solid var(--border-color);
-          border-radius: 3px;
-          margin-top: 5px;
-          max-height: 300px;
-          overflow-y: auto;
-          z-index: 100;
-          box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        
-        .search-result-item {
-          padding: calc(var(--spacing-unit) * 0.5);
-          border-bottom: 1px solid var(--border-color);
-        }
-        
-        .search-result-item:last-child {
-          border-bottom: none;
-        }
-        
-        .search-result-item:hover {
-          background-color: var(--subtle-bg);
-        }
-        
-        .search-result-title {
-          font-weight: 500;
-        }
-        
-        .search-result-meta {
-          font-size: calc(var(--base-size) * 0.8);
-          color: var(--secondary-text);
-        }
-        
-        .search-result-snippet {
-          font-size: calc(var(--base-size) * 0.9);
-          margin-top: calc(var(--spacing-unit) * 0.25);
-        }
-        
-        .search-no-results {
-          padding: calc(var(--spacing-unit) * 0.5);
-          color: var(--secondary-text);
-          text-align: center;
-        }
-        
-        .hidden {
-          display: none;
-        }
-      `;
-      document.head.appendChild(style);
+      if (!document.getElementById('search-css')) {
+        const style = document.createElement('style');
+        style.id = 'search-css';
+        style.textContent = `
+          .search-container {
+            margin-top: var(--spacing-unit);
+            position: relative;
+          }
+          
+          #search-input {
+            width: 100%;
+            padding: calc(var(--spacing-unit) * 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 3px;
+            font-family: inherit;
+            font-size: var(--base-size);
+          }
+          
+          .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: white;
+            border: 1px solid var(--border-color);
+            border-radius: 3px;
+            margin-top: 5px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+          }
+          
+          .search-result-item {
+            padding: calc(var(--spacing-unit) * 0.5);
+            border-bottom: 1px solid var(--border-color);
+          }
+          
+          .search-result-item:last-child {
+            border-bottom: none;
+          }
+          
+          .search-result-item:hover {
+            background-color: var(--subtle-bg);
+          }
+          
+          .search-result-title {
+            font-weight: 500;
+          }
+          
+          .search-result-meta {
+            font-size: calc(var(--base-size) * 0.8);
+            color: var(--secondary-text);
+          }
+          
+          .search-result-snippet {
+            font-size: calc(var(--base-size) * 0.9);
+            margin-top: calc(var(--spacing-unit) * 0.25);
+          }
+          
+          .search-no-results {
+            padding: calc(var(--spacing-unit) * 0.5);
+            color: var(--secondary-text);
+            text-align: center;
+          }
+          
+          .hidden {
+            display: none;
+          }
+        `;
+        document.head.appendChild(style);
+      }
       
       // Add event listener to the search input
       const searchInput = document.getElementById('search-input');

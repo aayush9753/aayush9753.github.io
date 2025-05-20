@@ -1,5 +1,5 @@
 /**
- * My Second Brain - Main JavaScript
+ * MyCave - Main JavaScript
  * Handles view toggling, content organization, and admin functionality
  */
 
@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Render posts from storage
   renderPosts();
   
-  // Admin Panel Functionality (if user is authenticated)
+  // Setup admin panel
   setupAdminPanel();
 });
 
@@ -21,10 +21,12 @@ function setupViewToggles() {
   const dateViewBtn = document.getElementById('date-view-btn');
   const tagViewBtn = document.getElementById('tag-view-btn');
   const subtagViewBtn = document.getElementById('subtag-view-btn');
+  const adminViewBtn = document.getElementById('admin-view-btn');
   
   const dateView = document.getElementById('date-view');
   const tagView = document.getElementById('tag-view');
   const subtagView = document.getElementById('subtag-view');
+  const adminPanel = document.getElementById('admin-panel');
   
   // Date View Toggle
   dateViewBtn.addEventListener('click', function() {
@@ -39,6 +41,11 @@ function setupViewToggles() {
   // Subtag View Toggle
   subtagViewBtn.addEventListener('click', function() {
     setActiveView(subtagViewBtn, subtagView);
+  });
+  
+  // Admin View Toggle
+  adminViewBtn.addEventListener('click', function() {
+    setActiveView(adminViewBtn, adminPanel);
   });
 }
 
@@ -219,7 +226,7 @@ function renderSubtagView(posts) {
 }
 
 /**
- * Sets up the admin panel functionality
+ * Setup the admin panel functionality
  */
 function setupAdminPanel() {
   const adminPanel = document.getElementById('admin-panel');
@@ -230,22 +237,18 @@ function setupAdminPanel() {
   const postForm = document.getElementById('post-form');
   const cancelPostBtn = document.getElementById('cancel-post');
   
-  // Show admin panel with login button
-  adminPanel.classList.remove('hidden');
-  
   // Check if already logged in
   if (dataStorage.checkAdminStatus()) {
     loginSection.style.display = 'none';
     contentManagement.classList.remove('hidden');
     
-    // Load and display drafts
+    // Load and display drafts and posts
     renderDrafts();
   }
   
-  // Update login button to prompt for password
-  loginBtn.textContent = 'Admin Login';
+  // Handle login
   loginBtn.addEventListener('click', function() {
-    const password = prompt('Enter admin password:');
+    const password = document.getElementById('admin-password').value;
     
     if (password) {
       const success = dataStorage.adminLogin(password);
@@ -259,21 +262,26 @@ function setupAdminPanel() {
       } else {
         alert('Incorrect password. Access denied.');
       }
+    } else {
+      alert('Please enter the admin password.');
     }
   });
   
-  // Add logout button
-  const logoutBtn = document.createElement('button');
-  logoutBtn.id = 'logout-btn';
-  logoutBtn.textContent = 'Logout';
-  logoutBtn.style.marginLeft = '10px';
-  logoutBtn.addEventListener('click', function() {
-    dataStorage.adminLogout();
-    loginSection.style.display = 'block';
-    contentManagement.classList.add('hidden');
-  });
-  
-  contentManagement.insertBefore(logoutBtn, contentManagement.firstChild);
+  // Add a logout button if it doesn't exist
+  if (!document.getElementById('logout-btn')) {
+    const logoutBtn = document.createElement('button');
+    logoutBtn.id = 'logout-btn';
+    logoutBtn.textContent = 'Logout';
+    logoutBtn.style.marginLeft = '10px';
+    logoutBtn.style.marginBottom = '15px';
+    logoutBtn.addEventListener('click', function() {
+      dataStorage.adminLogout();
+      loginSection.style.display = 'block';
+      contentManagement.classList.add('hidden');
+    });
+    
+    contentManagement.insertBefore(logoutBtn, contentManagement.firstChild);
+  }
   
   // Show new post form
   newPostBtn.addEventListener('click', function() {
@@ -347,6 +355,7 @@ function setupAdminPanel() {
       
       alert('Post published successfully!');
       renderPosts();
+      renderDrafts();
     }
     
     // Reset form and hide it
@@ -356,27 +365,18 @@ function setupAdminPanel() {
 }
 
 /**
- * Render drafts in the admin panel
+ * Render drafts and posts in the admin panel
  */
 function renderDrafts() {
   const contentManagement = document.getElementById('content-management');
+  const draftsSection = document.getElementById('drafts-section');
+  const postsSection = document.getElementById('posts-section');
   
-  // Remove existing drafts section if it exists
-  const existingDraftsSection = document.getElementById('drafts-section');
-  if (existingDraftsSection) {
-    existingDraftsSection.remove();
-  }
+  if (!draftsSection || !postsSection) return;
   
-  // Remove existing posts management section if it exists
-  const existingPostsSection = document.getElementById('posts-section');
-  if (existingPostsSection) {
-    existingPostsSection.remove();
-  }
-  
-  // Create drafts section
-  const draftsSection = document.createElement('div');
-  draftsSection.id = 'drafts-section';
+  // Clear existing content
   draftsSection.innerHTML = '<h4>Your Drafts</h4>';
+  postsSection.innerHTML = '<h4>Manage Published Posts</h4>';
   
   // Get drafts from storage
   const drafts = dataStorage.getDrafts();
@@ -398,8 +398,8 @@ function renderDrafts() {
       <tbody>
         ${drafts.map(draft => `
           <tr data-id="${draft.id}">
-            <td>${draft.title}</td>
-            <td>${draft.date}</td>
+            <td>${draft.title || 'Untitled'}</td>
+            <td>${draft.date || 'No date'}</td>
             <td>
               <button class="edit-draft-btn">Edit</button>
               <button class="publish-draft-btn">Publish</button>
@@ -412,11 +412,6 @@ function renderDrafts() {
     
     draftsSection.appendChild(draftsTable);
   }
-  
-  // Create posts management section
-  const postsSection = document.createElement('div');
-  postsSection.id = 'posts-section';
-  postsSection.innerHTML = '<h4>Manage Published Posts</h4>';
   
   // Get posts from storage
   const posts = dataStorage.getPosts();
@@ -438,8 +433,8 @@ function renderDrafts() {
       <tbody>
         ${posts.map(post => `
           <tr data-id="${post.id}">
-            <td>${post.title}</td>
-            <td>${post.date}</td>
+            <td>${post.title || 'Untitled'}</td>
+            <td>${post.date || 'No date'}</td>
             <td>
               <button class="edit-post-btn">Edit</button>
               <button class="delete-post-btn">Delete</button>
@@ -452,7 +447,7 @@ function renderDrafts() {
     postsSection.appendChild(postsTable);
   }
   
-  // Add some CSS for tables
+  // Add some CSS for tables if it doesn't exist
   if (!document.getElementById('admin-table-css')) {
     const style = document.createElement('style');
     style.id = 'admin-table-css';
@@ -503,10 +498,6 @@ function renderDrafts() {
     `;
     document.head.appendChild(style);
   }
-  
-  // Add the sections to the content management area
-  contentManagement.appendChild(draftsSection);
-  contentManagement.appendChild(postsSection);
   
   // Add event listeners for draft actions
   const editDraftBtns = document.querySelectorAll('.edit-draft-btn');
@@ -567,11 +558,11 @@ function editDraft(draftId) {
     form.dataset.editId = draftId;
     form.dataset.editType = 'edit-draft';
     
-    document.getElementById('post-title').value = draft.title;
-    document.getElementById('post-date').value = draft.date;
-    document.getElementById('post-tags').value = draft.tags.join(', ');
+    document.getElementById('post-title').value = draft.title || '';
+    document.getElementById('post-date').value = draft.date || '';
+    document.getElementById('post-tags').value = draft.tags ? draft.tags.join(', ') : '';
     document.getElementById('post-subtags').value = draft.subtags ? draft.subtags.join(', ') : '';
-    document.getElementById('post-content').value = draft.content;
+    document.getElementById('post-content').value = draft.content || '';
     document.getElementById('post-draft').checked = true;
     
     // Show the form
@@ -614,11 +605,11 @@ function editPost(postId) {
     form.dataset.editId = postId;
     form.dataset.editType = 'edit-post';
     
-    document.getElementById('post-title').value = post.title;
-    document.getElementById('post-date').value = post.date;
-    document.getElementById('post-tags').value = post.tags.join(', ');
+    document.getElementById('post-title').value = post.title || '';
+    document.getElementById('post-date').value = post.date || '';
+    document.getElementById('post-tags').value = post.tags ? post.tags.join(', ') : '';
     document.getElementById('post-subtags').value = post.subtags ? post.subtags.join(', ') : '';
-    document.getElementById('post-content').value = post.content;
+    document.getElementById('post-content').value = post.content || '';
     document.getElementById('post-draft').checked = false;
     
     // Show the form

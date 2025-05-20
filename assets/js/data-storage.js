@@ -1,13 +1,13 @@
 /**
- * Data Storage Module for My Second Brain
+ * Data Storage Module for MyCave
  * Handles post and draft storage using localStorage
  */
 
 class DataStorage {
   constructor() {
-    this.POSTS_KEY = 'my-second-brain-posts';
-    this.DRAFTS_KEY = 'my-second-brain-drafts';
-    this.ADMIN_KEY = 'my-second-brain-admin';
+    this.POSTS_KEY = 'mycave-posts';
+    this.DRAFTS_KEY = 'mycave-drafts';
+    this.ADMIN_KEY = 'mycave-admin';
     this.posts = [];
     this.drafts = [];
     this.isAdmin = false;
@@ -25,7 +25,7 @@ class DataStorage {
     if (savedPosts) {
       this.posts = JSON.parse(savedPosts);
     } else {
-      // Use default data from search.js as initial data
+      // Use default data as initial data
       this.posts = [
         {
           id: 'post-1',
@@ -243,9 +243,7 @@ class DataStorage {
    * Login as admin
    */
   adminLogin(password) {
-    // In a real implementation, you would verify the password securely
-    // For demo purposes, we use a simple password check
-    // Replace with a more secure method in production
+    // Simple password check - in a real app, use secure authentication
     const isCorrect = password === 'admin123'; // Example password
     
     if (isCorrect) {

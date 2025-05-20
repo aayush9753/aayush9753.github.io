@@ -1,6 +1,6 @@
 /**
  * Simple Markdown Renderer
- * Converts Markdown syntax to HTML for the knowledge base
+ * Converts Markdown syntax to HTML for MyCave
  */
 
 class MarkdownRenderer {

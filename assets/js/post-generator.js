@@ -1,5 +1,5 @@
 /**
- * Post Generator Module for My Second Brain
+ * Post Generator Module for MyCave
  * Handles post HTML file creation when posts are published
  */
 
@@ -70,7 +70,7 @@ class PostGenerator {
     let html = this.templateHtml;
     
     // Title
-    html = html.replace(/<title>.*?<\/title>/, `<title>${post.title} - My Second Brain</title>`);
+    html = html.replace(/<title>.*?<\/title>/, `<title>${post.title} - MyCave</title>`);
     
     // Meta description
     const description = post.content.length > 150 ? post.content.substring(0, 147) + '...' : post.content;
