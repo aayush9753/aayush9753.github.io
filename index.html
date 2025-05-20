@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Romit</title>
+  <style>
+    body {
+      font-family: monospace;
+      max-width: 650px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      line-height: 1.5;
+    }
+    h1 {
+      font-size: 2rem;
+      font-weight: normal;
+      margin-bottom: 0;
+    }
+    h2 {
+      font-size: 1rem;
+      font-weight: normal;
+      margin-top: 0.25rem;
+    }
+    ul {
+      list-style-type: none;
+      padding-left: 1rem;
+      margin-top: 1.5rem;
+    }
+    li {
+      margin-bottom: 0.3rem;
+    }
+    li::before {
+      content: "• ";
+      display: inline-block;
+      width: 1rem;
+      margin-left: -1rem;
+    }
+    li li::before {
+      content: "○ ";
+    }
+    a {
+      color: blue;
+    }
+    .date {
+      display: inline-block;
+      min-width: 7rem;
+    }
+    .older {
+      margin-top: 1rem;
+      margin-left: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Romit</h1>
+  <h2>My second brain</h2>
+
+  <ul>
+    <li>info
+      <ul>
+        <li><a href="#">motivation</a></li>
+        <li><a href="#">about me</a></li>
+        <li><a href="https://github.com/aayush9753">github</a></li>
+      </ul>
+    </li>
+    
+    <li>all posts
+      <ul>
+        <li><span class="date">2023-07-15</span> <a href="#">Notes on building a second brain</a></li>
+        <li><span class="date">2023-06-30</span> <a href="#">Reflections on minimalism</a></li>
+        <li><span class="date">2023-06-10</span> <a href="#">Understanding plain text productivity</a></li>
+        <li><span class="date">2023-05-22</span> <a href="#">Digital gardens vs traditional blogs</a></li>
+        <li><span class="date">2023-05-01</span> <a href="#">Getting started with personal knowledge management</a></li>
+      </ul>
+    </li>
+    
+    <li>selected work samples
+      <ul>
+        <li><a href="#">Ultra-minimal research site</a></li>
+        <li><a href="#">Plain text knowledge base</a></li>
+        <li><a href="#">Monospace writing system</a></li>
+      </ul>
+    </li>
+  </ul>
+  
+  <div class="older">
+    <a href="#">older posts...</a>
+  </div>
+</body>
+</html>
