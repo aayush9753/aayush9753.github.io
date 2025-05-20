@@ -1,6 +1,7 @@
 theme: jekyll-theme-cayman
-title: Welcome to Aayush Sharma's Homepage
-discription: Feel free to bookmark this to keep an eye on my project updates
+title: Welcome to mando's Homepage
+description: Feel free to bookmark this to keep an eye on my project updates
 remote_theme: hydecorp/hydejack@v9.0.4
+logo: /assets/img/profile.png
 plugins:
   - jekyll-include-cache
