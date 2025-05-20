@@ -82,10 +82,15 @@ class DataStorage {
       this.drafts = JSON.parse(savedDrafts);
     }
     
-    // Check admin status
-    const adminStatus = localStorage.getItem(this.ADMIN_KEY);
-    this.isAdmin = adminStatus === 'true';
-    console.log('Admin status on init:', this.isAdmin);
+    try {
+      // Check admin status
+      const adminStatus = localStorage.getItem(this.ADMIN_KEY);
+      this.isAdmin = adminStatus === 'true';
+      console.log('Admin status initialized from localStorage:', this.isAdmin);
+    } catch (err) {
+      console.error('Error loading admin status:', err);
+      this.isAdmin = false;
+    }
   }
   
   /**
@@ -264,8 +269,13 @@ class DataStorage {
    * Set admin status
    */
   setAdminStatus(isAdmin) {
-    this.isAdmin = isAdmin;
-    localStorage.setItem(this.ADMIN_KEY, isAdmin.toString());
+    try {
+      this.isAdmin = Boolean(isAdmin);
+      localStorage.setItem(this.ADMIN_KEY, this.isAdmin.toString());
+      console.log('Admin status set to:', this.isAdmin);
+    } catch (err) {
+      console.error('Error setting admin status:', err);
+    }
   }
   
   /**
@@ -279,17 +289,22 @@ class DataStorage {
    * Login as admin
    */
   adminLogin(password) {
-    // Simple password check - in a real app, use secure authentication
-    const isCorrect = password === 'admin123'; // Example password
-    
-    if (isCorrect) {
-      console.log('Password correct, setting admin status to true');
-      this.setAdminStatus(true);
-    } else {
-      console.log('Password incorrect');
+    try {
+      // Simple password check - in a real app, use secure authentication
+      const isCorrect = password === 'admin123'; // Example password
+      
+      if (isCorrect) {
+        console.log('Password correct, setting admin status to true');
+        this.setAdminStatus(true);
+      } else {
+        console.log('Password incorrect:', password);
+      }
+      
+      return isCorrect;
+    } catch (err) {
+      console.error('Error in admin login:', err);
+      return false;
     }
-    
-    return isCorrect;
   }
   
   /**
@@ -297,6 +312,15 @@ class DataStorage {
    */
   adminLogout() {
     this.setAdminStatus(false);
+  }
+
+  /**
+   * Clear admin status from localStorage
+   */
+  resetAdminStatus() {
+    localStorage.removeItem(this.ADMIN_KEY);
+    this.isAdmin = false;
+    console.log('Admin status reset');
   }
 }
 
