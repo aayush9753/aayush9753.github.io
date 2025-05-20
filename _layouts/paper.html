@@ -1,0 +1,123 @@
+---
+layout: page
+---
+
+<article class="paper">
+  <header class="paper-header">
+    <h1 class="paper-title">{{ page.title }}</h1>
+    
+    <div class="paper-meta">
+      <p class="paper-authors">
+        <strong>Authors:</strong> {{ page.authors | join: ", " }}
+      </p>
+      <p class="paper-publication">
+        <strong>Publication:</strong> {{ page.publication }}
+        {% if page.date %}<span class="paper-date">({{ page.date | date: "%Y" }})</span>{% endif %}
+      </p>
+      {% if page.doi %}
+      <p class="paper-doi">
+        <strong>DOI:</strong> <a href="https://doi.org/{{ page.doi }}" target="_blank">{{ page.doi }}</a>
+      </p>
+      {% endif %}
+      {% if page.url_paper %}
+      <p class="paper-link">
+        <strong>Link:</strong> <a href="{{ page.url_paper }}" target="_blank">View Paper</a>
+      </p>
+      {% endif %}
+      {% if page.reading_time %}
+      <p class="paper-reading-time">
+        <strong>Estimated Reading Time:</strong> {{ page.reading_time }} minutes
+      </p>
+      {% endif %}
+      {% if page.progress %}
+      <p class="paper-progress">
+        <strong>Reading Progress:</strong> {{ page.progress }}%
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: {{ page.progress }}%"></div>
+        </div>
+      </p>
+      {% endif %}
+    </div>
+    
+    {% if page.tags.size > 0 %}
+    <div class="paper-tags">
+      {% for tag in page.tags %}
+      <a href="/search/?q={{ tag | uri_escape }}" class="tag">{{ tag }}</a>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </header>
+
+  <div class="paper-sections">
+    {% if page.abstract %}
+    <section class="paper-abstract">
+      <h2>Abstract</h2>
+      <div class="abstract-content">
+        {{ page.abstract | markdownify }}
+      </div>
+    </section>
+    {% endif %}
+
+    {% if page.key_findings %}
+    <section class="paper-key-findings">
+      <h2>Key Findings</h2>
+      <div class="key-findings-content">
+        {{ page.key_findings | markdownify }}
+      </div>
+    </section>
+    {% endif %}
+
+    <section class="paper-notes">
+      <h2>Notes</h2>
+      <div class="notes-content">
+        {{ content }}
+      </div>
+    </section>
+
+    {% if page.related_papers.size > 0 %}
+    <section class="paper-related">
+      <h2>Related Papers</h2>
+      <ul class="related-papers-list">
+        {% for paper_id in page.related_papers %}
+          {% assign related = site.papers | where: "paper_id", paper_id | first %}
+          {% if related %}
+          <li>
+            <a href="{{ related.url | relative_url }}">{{ related.title }}</a>
+            <span class="related-paper-authors">{{ related.authors | join: ", " }}</span>
+            <span class="related-paper-year">{{ related.date | date: "%Y" }}</span>
+          </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </section>
+    {% endif %}
+  </div>
+
+  <div class="paper-tools">
+    <h3>Citation</h3>
+    <div class="citation-formats">
+      <div class="citation-tabs">
+        <button class="citation-tab active" data-format="apa">APA</button>
+        <button class="citation-tab" data-format="mla">MLA</button>
+        <button class="citation-tab" data-format="chicago">Chicago</button>
+      </div>
+      
+      <div class="citation-content">
+        <div class="citation-format active" id="apa-citation">
+          {{ page.citation.apa | default: "Citation not available" }}
+        </div>
+        <div class="citation-format" id="mla-citation">
+          {{ page.citation.mla | default: "Citation not available" }}
+        </div>
+        <div class="citation-format" id="chicago-citation">
+          {{ page.citation.chicago | default: "Citation not available" }}
+        </div>
+      </div>
+      
+      <button class="copy-citation-btn" data-clipboard-target="#apa-citation">Copy Citation</button>
+    </div>
+  </div>
+</article>
+
+<script src="{{ '/assets/js/clipboard.min.js' | relative_url }}"></script>
+<script src="{{ '/assets/js/paper.js' | relative_url }}"></script>

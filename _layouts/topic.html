@@ -1,0 +1,73 @@
+---
+layout: page
+---
+
+<article class="topic">
+  <header class="topic-header">
+    <h1 class="topic-title">{{ page.title }}</h1>
+    
+    <div class="topic-meta">
+      {% if page.description %}
+      <p class="topic-description">{{ page.description }}</p>
+      {% endif %}
+    </div>
+    
+    {% if page.tags.size > 0 %}
+    <div class="topic-tags">
+      {% for tag in page.tags %}
+      <a href="/search/?q={{ tag | uri_escape }}" class="tag">{{ tag }}</a>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </header>
+
+  {% if content != "" %}
+  <div class="topic-content">
+    {{ content }}
+  </div>
+  {% endif %}
+
+  <div class="topic-papers">
+    <h2>Papers in this Topic</h2>
+    
+    {% assign topic_papers = site.papers | where_exp: "paper", "paper.topics contains page.topic_id" | sort: "date" | reverse %}
+    
+    {% if topic_papers.size > 0 %}
+    <div class="papers-list">
+      {% for paper in topic_papers %}
+      <div class="paper-card">
+        <h3><a href="{{ paper.url | relative_url }}">{{ paper.title }}</a></h3>
+        <p class="paper-meta">
+          <span class="paper-authors">{{ paper.authors | join: ", " }}</span>
+          <span class="paper-date">{{ paper.date | date: "%Y" }}</span>
+        </p>
+        <p class="paper-abstract">{{ paper.abstract | truncate: 150 }}</p>
+        <div class="paper-tags">
+          {% for tag in paper.tags %}
+          <span class="tag">{{ tag }}</span>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p>No papers in this topic yet.</p>
+    {% endif %}
+  </div>
+
+  {% if page.related_topics.size > 0 %}
+  <div class="related-topics">
+    <h2>Related Topics</h2>
+    <ul class="related-topics-list">
+      {% for topic_id in page.related_topics %}
+        {% assign related = site.topics | where: "topic_id", topic_id | first %}
+        {% if related %}
+        <li>
+          <a href="{{ related.url | relative_url }}">{{ related.title }}</a>
+        </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+</article>

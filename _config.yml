@@ -1,7 +1,89 @@
-theme: jekyll-theme-cayman
-title: Welcome to mando's Homepage
-description: Feel free to bookmark this to keep an eye on my project updates
 remote_theme: hydecorp/hydejack@v9.0.4
-logo: /assets/img/profile.png
+title: Research Reading Library
+description: A personal collection of research papers, articles, and reading notes
+lang: en
+logo: /assets/img/logo.png
+
+# SEO settings
+tagline: Organized research notes and paper summaries
+keywords:
+  - research
+  - papers
+  - notes
+  - academic
+  - reading list
+
+# Customization
+accent_image: /assets/img/sidebar-bg.jpg
+accent_color: rgb(79,177,186)
+theme_color: rgb(25,55,71)
+
+# Site features
+search: true
+markdown: kramdown
+highlighter: rouge
+excerpt_separator: <!--more-->
+permalink: /:title/
+
+# Collections for research content
+collections:
+  papers:
+    output: true
+    permalink: /papers/:path/
+  notes:
+    output: true
+    permalink: /notes/:path/
+  topics:
+    output: true
+    permalink: /topics/:path/
+
+# Default settings
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: page
+  - scope:
+      path: ""
+      type: papers
+    values:
+      layout: paper
+  - scope:
+      path: ""
+      type: notes
+    values:
+      layout: note
+  - scope:
+      path: ""
+      type: topics
+    values:
+      layout: topic
+
+# Plugins
 plugins:
   - jekyll-include-cache
+  - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-sitemap
+  - jekyll-paginate
+
+# Hydejack settings
+hydejack:
+  dark_mode:
+    dynamic: true
+    sunrise: 6
+    sunset: 18
+  no_inline_css: true
+  no_page_style: true
+
+menu:
+  - title: Home
+    url: /
+  - title: Papers
+    url: /papers/
+  - title: Topics
+    url: /topics/
+  - title: Reading Queue
+    url: /queue/
+  - title: Search
+    url: /search/
