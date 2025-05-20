@@ -96,40 +96,74 @@
         <div id="post-form" class="hidden">
           <h3>Create/Edit Post</h3>
           <form id="post-editor">
-            <div class="form-group">
-              <label for="post-title">Title:</label>
-              <input type="text" id="post-title" required placeholder="Enter post title">
+            <div class="editor-action-bar">
+              <div class="form-group checkbox">
+                <label>
+                  <input type="checkbox" id="post-draft"> Save as draft
+                </label>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="primary-btn">Save</button>
+                <button type="button" id="preview-post" class="secondary-btn">Preview</button>
+                <button type="button" id="cancel-post" class="secondary-btn">Cancel</button>
+              </div>
             </div>
             
-            <div class="form-group">
-              <label for="post-date">Date:</label>
-              <input type="date" id="post-date" required>
+            <!-- Preview section -->
+            <div id="post-preview" class="hidden">
+              <h4>Preview</h4>
+              <div class="preview-content"></div>
             </div>
             
-            <div class="form-group">
-              <label for="post-tags">Tags (comma-separated):</label>
-              <input type="text" id="post-tags" placeholder="e.g., tutorial, guide, how-to">
-            </div>
-            
-            <div class="form-group">
-              <label for="post-subtags">Subtags (comma-separated):</label>
-              <input type="text" id="post-subtags" placeholder="e.g., javascript, css, html">
-            </div>
-            
-            <div class="form-group">
-              <label for="post-content">Content (Markdown):</label>
-              <textarea id="post-content" rows="15" required placeholder="Write your post content in Markdown format"></textarea>
-            </div>
-            
-            <div class="form-group checkbox">
-              <label>
-                <input type="checkbox" id="post-draft"> Save as draft
-              </label>
-            </div>
-            
-            <div class="form-actions">
-              <button type="submit" class="primary-btn">Save</button>
-              <button type="button" id="cancel-post" class="secondary-btn">Cancel</button>
+            <div class="editor-container">
+              <div class="editor-headers">
+                <div class="form-group">
+                  <label for="post-headers-textarea">Headers (YAML-style metadata):</label>
+                  <textarea id="post-headers-textarea" class="bear-headers-textarea" placeholder="title: Your Post Title
+date: 2025-05-20
+tags: tutorial, guide, how-to
+subtags: javascript, css, html
+___
+
+Add metadata above using key-value pairs, one per line. 
+End with '___' (three underscores) to separate from content."></textarea>
+                  
+                  <!-- Hidden original fields for data compatibility -->
+                  <input type="hidden" id="post-title">
+                  <input type="hidden" id="post-date">
+                  <input type="hidden" id="post-tags">
+                  <input type="hidden" id="post-subtags">
+                </div>
+              </div>
+              
+              <div class="editor-separator">___</div>
+              
+              <div class="editor-content">
+                <textarea id="post-content" rows="15" required placeholder="Write your post content in Markdown format...
+
+# This is a heading
+## This is a subheading
+
+This is a paragraph with **bold** and *italic* text.
+
+- This is a bullet point
+- Another bullet point
+
+[This is a link](https://example.com)
+
+> This is a blockquote
+
+You can also add code like `this` or:
+
+```
+function example() {
+  console.log('Hello world');
+}
+```
+
+![This is an image alt text](https://example.com/image.jpg)
+"></textarea>
+              </div>
             </div>
           </form>
         </div>
@@ -180,5 +214,6 @@
   <script src="assets/js/main.js"></script>
   <script src="assets/js/admin-panel.js"></script>
   <script src="assets/js/batman-admin.js"></script>
+  <script src="assets/js/bear-editor.js"></script>
 </body>
 </html>

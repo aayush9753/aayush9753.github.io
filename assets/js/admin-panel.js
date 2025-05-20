@@ -194,6 +194,33 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Scroll to form
     postForm.scrollIntoView({ behavior: 'smooth' });
+    
+    // Initialize Bear Blog style editor
+    initBearBlogEditor();
+  }
+  
+  /**
+   * Initialize Bear Blog style editor
+   */
+  function initBearBlogEditor() {
+    const actionBar = document.querySelector('.editor-action-bar');
+    const editorContainer = document.querySelector('.editor-container');
+    
+    if (!actionBar || !editorContainer) return;
+    
+    // Apply initial editor height
+    const headerHeight = actionBar.offsetHeight;
+    document.documentElement.style.setProperty('--editor-offset', headerHeight + 'px');
+    
+    // Make sure the action bar stays sticky at the top
+    window.addEventListener('scroll', function() {
+      const rect = editorContainer.getBoundingClientRect();
+      if (rect.top < 0) {
+        actionBar.classList.add('sticky');
+      } else {
+        actionBar.classList.remove('sticky');
+      }
+    });
   }
   
   /**
@@ -443,6 +470,16 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Scroll to form
     postForm.scrollIntoView({ behavior: 'smooth' });
+    
+    // Initialize Bear Blog style editor
+    initBearBlogEditor();
+    
+    // Trigger content preview update
+    const contentInput = document.getElementById('post-content');
+    if (contentInput && contentInput.value) {
+      const event = new Event('input');
+      contentInput.dispatchEvent(event);
+    }
   }
   
   /**
@@ -472,6 +509,16 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Scroll to form
     postForm.scrollIntoView({ behavior: 'smooth' });
+    
+    // Initialize Bear Blog style editor
+    initBearBlogEditor();
+    
+    // Trigger content preview update
+    const contentInput = document.getElementById('post-content');
+    if (contentInput && contentInput.value) {
+      const event = new Event('input');
+      contentInput.dispatchEvent(event);
+    }
   }
   
   /**

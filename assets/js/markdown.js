@@ -147,8 +147,14 @@ document.addEventListener('DOMContentLoaded', function() {
     previewArea.className = 'markdown-preview';
     previewArea.innerHTML = '<h4>Content Preview</h4><div class="preview-content"></div>';
     
-    // Insert after the content textarea
-    postContent.parentNode.insertBefore(previewArea, postContent.nextSibling);
+    // Insert after the editor container
+    const editorContainer = document.querySelector('.editor-container');
+    if (editorContainer) {
+      editorContainer.appendChild(previewArea);
+    } else {
+      // Fallback to the old method if editor container doesn't exist
+      postContent.parentNode.insertBefore(previewArea, postContent.nextSibling);
+    }
     
     // Add live preview functionality
     postContent.addEventListener('input', function() {

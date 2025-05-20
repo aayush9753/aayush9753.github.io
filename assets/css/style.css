@@ -392,6 +392,60 @@ textarea {
   padding: var(--spacing-unit);
   border-radius: 3px;
   border: 1px solid var(--border-color);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+}
+
+/* Bear Blog style preview formatting */
+.preview-content h1, 
+.preview-content h2, 
+.preview-content h3, 
+.preview-content h4 {
+  margin-top: 1.5em;
+  margin-bottom: 0.75em;
+}
+
+.preview-content p {
+  margin-bottom: 1.5em;
+}
+
+.preview-content ul, 
+.preview-content ol {
+  margin-bottom: 1.5em;
+  padding-left: 2em;
+}
+
+.preview-content li {
+  margin-bottom: 0.5em;
+}
+
+.preview-content blockquote {
+  border-left: 3px solid var(--border-color);
+  padding-left: 1em;
+  margin-left: 0;
+  color: var(--secondary-text);
+}
+
+.preview-content code {
+  font-family: monospace;
+  background-color: var(--code-bg);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+.preview-content pre {
+  background-color: var(--code-bg);
+  padding: 1em;
+  border-radius: 3px;
+  overflow-x: auto;
+  margin-bottom: 1.5em;
+}
+
+.preview-content pre code {
+  background-color: transparent;
+  padding: 0;
+  font-size: 0.9em;
 }
 
 /* Responsive Design */
@@ -612,15 +666,158 @@ textarea {
 /* Post Form */
 #post-form {
   background: var(--bg-secondary);
-  padding: 2rem;
+  padding: 0;
   border-radius: 8px;
   margin: 2rem 0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-#post-form textarea {
-  font-family: monospace;
+#post-form h3 {
+  padding: 1rem 2rem 0;
+}
+
+/* Bear Blog style editor */
+.editor-action-bar {
+  position: sticky;
+  top: 0;
+  background: var(--subtle-bg);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid var(--border-color);
+  z-index: 10;
+  transition: box-shadow 0.2s ease;
+}
+
+.editor-action-bar.sticky {
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.editor-container {
+  display: flex;
+  flex-direction: column;
+  padding: 0 2rem 2rem;
+}
+
+.editor-headers {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background-color: var(--subtle-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+}
+
+.editor-headers .form-group:last-child {
+  margin-bottom: 0;
+}
+
+/* Convert the individual form fields to a single textarea in Bear Blog style */
+.bear-headers-textarea {
+  width: 100%;
+  min-height: 150px;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
   line-height: 1.5;
+  resize: vertical;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: white;
+  margin-top: 0.5rem;
+}
+
+.editor-separator {
+  padding: 1rem 0;
+  color: var(--secondary-text);
+  font-family: monospace;
+  font-size: 1.2rem;
+  text-align: center;
+  letter-spacing: 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 1rem;
+}
+
+.editor-content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+#post-content {
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  line-height: 1.6;
+  min-height: 350px;
+  flex-grow: 1;
+  resize: vertical;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: white;
+}
+
+/* Markdown Preview */
+#post-preview {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background-color: white;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+}
+
+#post-preview h4 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.preview-content {
+  line-height: 1.6;
+}
+
+.preview-content h1,
+.preview-content h2,
+.preview-content h3 {
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+.preview-content p {
+  margin-bottom: 1em;
+}
+
+.preview-content ul,
+.preview-content ol {
+  margin-left: 1.5em;
+  margin-bottom: 1em;
+}
+
+.preview-content code {
+  font-family: monospace;
+  background-color: var(--subtle-bg);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+.preview-content pre {
+  background-color: var(--subtle-bg);
+  padding: 1rem;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin-bottom: 1em;
+}
+
+.preview-content blockquote {
+  border-left: 3px solid var(--border-color);
+  padding-left: 1rem;
+  color: var(--secondary-text);
+  margin: 0 0 1em 0;
+}
+
+/* Fix checkbox alignment in action bar */
+.editor-action-bar .form-group.checkbox {
+  margin-bottom: 0;
 }
 
 /* Batman Secret Admin Button */
@@ -721,5 +918,25 @@ textarea {
   .delete-btn {
     padding: 0.4rem 0.8rem;
     font-size: 0.8rem;
+  }
+  
+  /* Bear Blog editor responsive fixes */
+  .editor-action-bar {
+    padding: 0.75rem 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .editor-container {
+    padding: 0 1rem 1rem;
+  }
+  
+  .editor-action-bar .form-actions {
+    width: 100%;
+  }
+  
+  #post-content {
+    min-height: 200px;
   }
 }
