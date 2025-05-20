@@ -1,0 +1,292 @@
+/* My Second Brain - Minimalist Knowledge Base
+   A clean, content-focused personal knowledge management system */
+
+/* CSS Variables for consistent theming */
+:root {
+  /* Colors */
+  --background-color: #FFFFFF;
+  --text-color: #333333;
+  --accent-color: #0066CC;
+  --secondary-text: #666666;
+  --subtle-bg: #F0F0F0;
+  --border-color: #EEEEEE;
+  
+  /* Typography */
+  --base-size: 16px;
+  --scale-ratio: 1.2;
+  --line-height: 1.5;
+  
+  /* Spacing */
+  --spacing-unit: 1rem;
+}
+
+/* Base Reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Base Typography */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: var(--base-size);
+  line-height: var(--line-height);
+  color: var(--text-color);
+  background-color: var(--background-color);
+  max-width: 650px;
+  margin: 0 auto;
+  padding: calc(var(--spacing-unit) * 2);
+}
+
+/* Typography Scale */
+h1 {
+  font-size: calc(var(--base-size) * var(--scale-ratio) * var(--scale-ratio));
+  font-weight: 500;
+  margin-bottom: calc(var(--spacing-unit) * 0.25);
+}
+
+h2 {
+  font-size: calc(var(--base-size) * var(--scale-ratio));
+  font-weight: 400;
+  margin-bottom: calc(var(--spacing-unit) * 0.75);
+  color: var(--secondary-text);
+}
+
+h3 {
+  font-size: calc(var(--base-size) * var(--scale-ratio));
+  font-weight: 500;
+  margin: calc(var(--spacing-unit) * 1.5) 0 var(--spacing-unit);
+}
+
+h4 {
+  font-size: var(--base-size);
+  font-weight: 600;
+  margin: var(--spacing-unit) 0 calc(var(--spacing-unit) * 0.5);
+}
+
+p {
+  margin-bottom: var(--spacing-unit);
+}
+
+/* Links */
+a {
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Layout Components */
+header {
+  margin-bottom: calc(var(--spacing-unit) * 2);
+}
+
+nav {
+  margin-top: var(--spacing-unit);
+}
+
+main {
+  min-height: 70vh;
+}
+
+footer {
+  margin-top: calc(var(--spacing-unit) * 3);
+  padding-top: var(--spacing-unit);
+  border-top: 1px solid var(--border-color);
+  font-size: calc(var(--base-size) * 0.9);
+  color: var(--secondary-text);
+}
+
+/* View Toggles */
+.view-toggles {
+  display: flex;
+  margin-bottom: calc(var(--spacing-unit) * 1.5);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.view-toggles button {
+  background: none;
+  border: none;
+  padding: calc(var(--spacing-unit) * 0.5) var(--spacing-unit);
+  font-size: var(--base-size);
+  color: var(--secondary-text);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+
+.view-toggles button:hover {
+  color: var(--accent-color);
+}
+
+.view-toggles button.active {
+  color: var(--accent-color);
+  border-bottom: 2px solid var(--accent-color);
+}
+
+/* Content Views */
+.content-view {
+  display: none;
+}
+
+.content-view.active {
+  display: block;
+}
+
+/* Post Lists */
+.post-list {
+  list-style: none;
+  margin-bottom: calc(var(--spacing-unit) * 2);
+}
+
+.post-list li {
+  margin-bottom: calc(var(--spacing-unit) * 0.75);
+  padding-bottom: calc(var(--spacing-unit) * 0.75);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.post-list li:last-child {
+  border-bottom: none;
+}
+
+.date {
+  display: inline-block;
+  min-width: 6.5rem;
+  color: var(--secondary-text);
+  font-size: calc(var(--base-size) * 0.9);
+}
+
+.post-title {
+  font-weight: 500;
+  display: block;
+  margin: calc(var(--spacing-unit) * 0.25) 0;
+}
+
+/* Tags */
+.tags {
+  margin-top: calc(var(--spacing-unit) * 0.25);
+}
+
+.tag, .subtag {
+  display: inline-block;
+  font-size: calc(var(--base-size) * 0.8);
+  background-color: var(--subtle-bg);
+  padding: calc(var(--spacing-unit) * 0.15) calc(var(--spacing-unit) * 0.5);
+  margin-right: calc(var(--spacing-unit) * 0.25);
+  margin-bottom: calc(var(--spacing-unit) * 0.25);
+  border-radius: 3px;
+  color: var(--secondary-text);
+}
+
+a.tag:hover, a.subtag:hover {
+  background-color: var(--accent-color);
+  color: white;
+  text-decoration: none;
+}
+
+.tag-list, .subtag-list {
+  margin-bottom: var(--spacing-unit);
+}
+
+.tag-section, .subtag-section {
+  margin-bottom: calc(var(--spacing-unit) * 2);
+}
+
+/* Admin Panel */
+.hidden {
+  display: none;
+}
+
+#admin-panel {
+  margin-top: calc(var(--spacing-unit) * 2);
+  padding: var(--spacing-unit);
+  background-color: var(--subtle-bg);
+  border-radius: 5px;
+}
+
+#login-btn, #new-post-btn {
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+  padding: calc(var(--spacing-unit) * 0.5) var(--spacing-unit);
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: var(--base-size);
+}
+
+#login-btn:hover, #new-post-btn:hover {
+  opacity: 0.9;
+}
+
+/* Form Elements */
+.form-group {
+  margin-bottom: var(--spacing-unit);
+}
+
+label {
+  display: block;
+  margin-bottom: calc(var(--spacing-unit) * 0.25);
+  font-weight: 500;
+}
+
+input[type="text"],
+input[type="date"],
+textarea {
+  width: 100%;
+  padding: calc(var(--spacing-unit) * 0.5);
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  font-family: inherit;
+  font-size: var(--base-size);
+}
+
+textarea {
+  resize: vertical;
+}
+
+.form-actions {
+  display: flex;
+  gap: var(--spacing-unit);
+}
+
+.form-actions button {
+  padding: calc(var(--spacing-unit) * 0.5) var(--spacing-unit);
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: var(--base-size);
+}
+
+.form-actions button[type="submit"] {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+.form-actions button[type="button"] {
+  background-color: var(--subtle-bg);
+  color: var(--text-color);
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  body {
+    padding: var(--spacing-unit);
+  }
+  
+  .view-toggles {
+    overflow-x: auto;
+  }
+  
+  .view-toggles button {
+    padding: calc(var(--spacing-unit) * 0.5) calc(var(--spacing-unit) * 0.25);
+    white-space: nowrap;
+  }
+  
+  .date {
+    min-width: 5rem;
+    display: block;
+    margin-bottom: calc(var(--spacing-unit) * 0.25);
+  }
+}

@@ -3,89 +3,235 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Romit</title>
-  <style>
-    body {
-      font-family: monospace;
-      max-width: 650px;
-      margin: 2rem auto;
-      padding: 0 1rem;
-      line-height: 1.5;
-    }
-    h1 {
-      font-size: 2rem;
-      font-weight: normal;
-      margin-bottom: 0;
-    }
-    h2 {
-      font-size: 1rem;
-      font-weight: normal;
-      margin-top: 0.25rem;
-    }
-    ul {
-      list-style-type: none;
-      padding-left: 1rem;
-      margin-top: 1.5rem;
-    }
-    li {
-      margin-bottom: 0.3rem;
-    }
-    li::before {
-      content: "• ";
-      display: inline-block;
-      width: 1rem;
-      margin-left: -1rem;
-    }
-    li li::before {
-      content: "○ ";
-    }
-    a {
-      color: blue;
-    }
-    .date {
-      display: inline-block;
-      min-width: 7rem;
-    }
-    .older {
-      margin-top: 1rem;
-      margin-left: 1rem;
-    }
-  </style>
+  <title>My Second Brain</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <meta name="description" content="A collection of thoughts, notes, and ideas">
 </head>
 <body>
-  <h1>Romit</h1>
-  <h2>My second brain</h2>
+  <header>
+    <h1>My Second Brain</h1>
+    <h2>A collection of thoughts, notes, and ideas</h2>
+    <nav>
+      <a href="index.html">Home</a> |
+      <a href="#about">About</a> |
+      <a href="https://github.com/aayush9753">GitHub</a>
+    </nav>
+  </header>
 
-  <ul>
-    <li>info
-      <ul>
-        <li><a href="#">motivation</a></li>
-        <li><a href="#">about me</a></li>
-        <li><a href="https://github.com/aayush9753">github</a></li>
+  <main>
+    <div class="view-toggles">
+      <button id="date-view-btn" class="active">Date View</button>
+      <button id="tag-view-btn">Tag View</button>
+      <button id="subtag-view-btn">Subtag View</button>
+    </div>
+
+    <!-- Date View (Default) -->
+    <section id="date-view" class="content-view active">
+      <h3>Posts by Date</h3>
+      <ul class="post-list">
+        <li>
+          <span class="date">2023-07-15</span>
+          <a href="#" class="post-title">Notes on building a second brain</a>
+          <div class="tags">
+            <span class="tag">productivity</span>
+            <span class="tag">knowledge-management</span>
+          </div>
+        </li>
+        <li>
+          <span class="date">2023-06-30</span>
+          <a href="#" class="post-title">Reflections on minimalism</a>
+          <div class="tags">
+            <span class="tag">lifestyle</span>
+            <span class="tag">philosophy</span>
+          </div>
+        </li>
+        <li>
+          <span class="date">2023-06-10</span>
+          <a href="#" class="post-title">Understanding plain text productivity</a>
+          <div class="tags">
+            <span class="tag">productivity</span>
+            <span class="tag">tools</span>
+          </div>
+        </li>
+        <li>
+          <span class="date">2023-05-22</span>
+          <a href="#" class="post-title">Digital gardens vs traditional blogs</a>
+          <div class="tags">
+            <span class="tag">writing</span>
+            <span class="tag">web</span>
+          </div>
+        </li>
+        <li>
+          <span class="date">2023-05-01</span>
+          <a href="#" class="post-title">Getting started with personal knowledge management</a>
+          <div class="tags">
+            <span class="tag">productivity</span>
+            <span class="tag">knowledge-management</span>
+          </div>
+        </li>
       </ul>
-    </li>
-    
-    <li>all posts
-      <ul>
-        <li><span class="date">2023-07-15</span> <a href="#">Notes on building a second brain</a></li>
-        <li><span class="date">2023-06-30</span> <a href="#">Reflections on minimalism</a></li>
-        <li><span class="date">2023-06-10</span> <a href="#">Understanding plain text productivity</a></li>
-        <li><span class="date">2023-05-22</span> <a href="#">Digital gardens vs traditional blogs</a></li>
-        <li><span class="date">2023-05-01</span> <a href="#">Getting started with personal knowledge management</a></li>
+
+      <h3>Selected Work Samples</h3>
+      <ul class="post-list">
+        <li>
+          <a href="#" class="post-title">Ultra-minimal research site</a>
+          <div class="tags">
+            <span class="tag">design</span>
+            <span class="tag">web</span>
+          </div>
+        </li>
+        <li>
+          <a href="#" class="post-title">Plain text knowledge base</a>
+          <div class="tags">
+            <span class="tag">productivity</span>
+            <span class="tag">tools</span>
+          </div>
+        </li>
+        <li>
+          <a href="#" class="post-title">Monospace writing system</a>
+          <div class="tags">
+            <span class="tag">writing</span>
+            <span class="tag">design</span>
+          </div>
+        </li>
       </ul>
-    </li>
-    
-    <li>selected work samples
-      <ul>
-        <li><a href="#">Ultra-minimal research site</a></li>
-        <li><a href="#">Plain text knowledge base</a></li>
-        <li><a href="#">Monospace writing system</a></li>
-      </ul>
-    </li>
-  </ul>
-  
-  <div class="older">
-    <a href="#">older posts...</a>
-  </div>
+    </section>
+
+    <!-- Tag View -->
+    <section id="tag-view" class="content-view">
+      <h3>Posts by Tag</h3>
+      <div class="tag-list">
+        <a href="#productivity" class="tag">productivity</a>
+        <a href="#knowledge-management" class="tag">knowledge-management</a>
+        <a href="#lifestyle" class="tag">lifestyle</a>
+        <a href="#philosophy" class="tag">philosophy</a>
+        <a href="#tools" class="tag">tools</a>
+        <a href="#writing" class="tag">writing</a>
+        <a href="#web" class="tag">web</a>
+        <a href="#design" class="tag">design</a>
+      </div>
+
+      <div id="productivity" class="tag-section">
+        <h4>productivity</h4>
+        <ul class="post-list">
+          <li>
+            <span class="date">2023-07-15</span>
+            <a href="#" class="post-title">Notes on building a second brain</a>
+          </li>
+          <li>
+            <span class="date">2023-06-10</span>
+            <a href="#" class="post-title">Understanding plain text productivity</a>
+          </li>
+          <li>
+            <span class="date">2023-05-01</span>
+            <a href="#" class="post-title">Getting started with personal knowledge management</a>
+          </li>
+          <li>
+            <a href="#" class="post-title">Plain text knowledge base</a>
+          </li>
+        </ul>
+      </div>
+
+      <div id="knowledge-management" class="tag-section">
+        <h4>knowledge-management</h4>
+        <ul class="post-list">
+          <li>
+            <span class="date">2023-07-15</span>
+            <a href="#" class="post-title">Notes on building a second brain</a>
+          </li>
+          <li>
+            <span class="date">2023-05-01</span>
+            <a href="#" class="post-title">Getting started with personal knowledge management</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Add more tag sections as needed -->
+    </section>
+
+    <!-- Subtag View -->
+    <section id="subtag-view" class="content-view">
+      <h3>Posts by Subtag</h3>
+      <div class="subtag-list">
+        <a href="#note-taking" class="subtag">note-taking</a>
+        <a href="#zettelkasten" class="subtag">zettelkasten</a>
+        <a href="#digital-minimalism" class="subtag">digital-minimalism</a>
+        <a href="#markdown" class="subtag">markdown</a>
+        <a href="#static-sites" class="subtag">static-sites</a>
+        <a href="#typography" class="subtag">typography</a>
+        <a href="#css" class="subtag">css</a>
+      </div>
+
+      <div id="note-taking" class="subtag-section">
+        <h4>note-taking</h4>
+        <ul class="post-list">
+          <li>
+            <span class="date">2023-07-15</span>
+            <a href="#" class="post-title">Notes on building a second brain</a>
+          </li>
+          <li>
+            <span class="date">2023-05-01</span>
+            <a href="#" class="post-title">Getting started with personal knowledge management</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Add more subtag sections as needed -->
+    </section>
+
+    <!-- Admin Panel (Hidden by default) -->
+    <section id="admin-panel" class="hidden">
+      <h3>Admin Panel</h3>
+      <div id="login-section">
+        <button id="login-btn">Login with Google</button>
+      </div>
+      <div id="content-management" class="hidden">
+        <button id="new-post-btn">Create New Post</button>
+        <div id="post-form" class="hidden">
+          <h4>Create/Edit Post</h4>
+          <form id="post-editor">
+            <div class="form-group">
+              <label for="post-title">Title:</label>
+              <input type="text" id="post-title" required>
+            </div>
+            <div class="form-group">
+              <label for="post-date">Date:</label>
+              <input type="date" id="post-date" required>
+            </div>
+            <div class="form-group">
+              <label for="post-tags">Tags (comma separated):</label>
+              <input type="text" id="post-tags">
+            </div>
+            <div class="form-group">
+              <label for="post-subtags">Subtags (comma separated):</label>
+              <input type="text" id="post-subtags">
+            </div>
+            <div class="form-group">
+              <label for="post-content">Content (Markdown):</label>
+              <textarea id="post-content" rows="10" required></textarea>
+            </div>
+            <div class="form-group">
+              <label>
+                <input type="checkbox" id="post-draft">
+                Save as draft
+              </label>
+            </div>
+            <div class="form-actions">
+              <button type="submit">Save Post</button>
+              <button type="button" id="cancel-post">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2023 My Second Brain</p>
+  </footer>
+
+  <script src="assets/js/markdown.js"></script>
+  <script src="assets/js/search.js"></script>
+  <script src="assets/js/main.js"></script>
 </body>
 </html>
