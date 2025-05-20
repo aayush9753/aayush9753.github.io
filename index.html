@@ -29,46 +29,7 @@
     <section id="date-view" class="content-view active">
       <h3>Posts by Date</h3>
       <ul class="post-list">
-        <li>
-          <span class="date">2023-07-15</span>
-          <a href="#" class="post-title">Notes on building a second brain</a>
-          <div class="tags">
-            <span class="tag">productivity</span>
-            <span class="tag">knowledge-management</span>
-          </div>
-        </li>
-        <li>
-          <span class="date">2023-06-30</span>
-          <a href="#" class="post-title">Reflections on minimalism</a>
-          <div class="tags">
-            <span class="tag">lifestyle</span>
-            <span class="tag">philosophy</span>
-          </div>
-        </li>
-        <li>
-          <span class="date">2023-06-10</span>
-          <a href="#" class="post-title">Understanding plain text productivity</a>
-          <div class="tags">
-            <span class="tag">productivity</span>
-            <span class="tag">tools</span>
-          </div>
-        </li>
-        <li>
-          <span class="date">2023-05-22</span>
-          <a href="#" class="post-title">Digital gardens vs traditional blogs</a>
-          <div class="tags">
-            <span class="tag">writing</span>
-            <span class="tag">web</span>
-          </div>
-        </li>
-        <li>
-          <span class="date">2023-05-01</span>
-          <a href="#" class="post-title">Getting started with personal knowledge management</a>
-          <div class="tags">
-            <span class="tag">productivity</span>
-            <span class="tag">knowledge-management</span>
-          </div>
-        </li>
+        <!-- Posts will be dynamically loaded here -->
       </ul>
 
       <h3>Selected Work Samples</h3>
@@ -101,82 +62,20 @@
     <section id="tag-view" class="content-view">
       <h3>Posts by Tag</h3>
       <div class="tag-list">
-        <a href="#productivity" class="tag">productivity</a>
-        <a href="#knowledge-management" class="tag">knowledge-management</a>
-        <a href="#lifestyle" class="tag">lifestyle</a>
-        <a href="#philosophy" class="tag">philosophy</a>
-        <a href="#tools" class="tag">tools</a>
-        <a href="#writing" class="tag">writing</a>
-        <a href="#web" class="tag">web</a>
-        <a href="#design" class="tag">design</a>
+        <!-- Tags will be dynamically loaded here -->
       </div>
 
-      <div id="productivity" class="tag-section">
-        <h4>productivity</h4>
-        <ul class="post-list">
-          <li>
-            <span class="date">2023-07-15</span>
-            <a href="#" class="post-title">Notes on building a second brain</a>
-          </li>
-          <li>
-            <span class="date">2023-06-10</span>
-            <a href="#" class="post-title">Understanding plain text productivity</a>
-          </li>
-          <li>
-            <span class="date">2023-05-01</span>
-            <a href="#" class="post-title">Getting started with personal knowledge management</a>
-          </li>
-          <li>
-            <a href="#" class="post-title">Plain text knowledge base</a>
-          </li>
-        </ul>
-      </div>
-
-      <div id="knowledge-management" class="tag-section">
-        <h4>knowledge-management</h4>
-        <ul class="post-list">
-          <li>
-            <span class="date">2023-07-15</span>
-            <a href="#" class="post-title">Notes on building a second brain</a>
-          </li>
-          <li>
-            <span class="date">2023-05-01</span>
-            <a href="#" class="post-title">Getting started with personal knowledge management</a>
-          </li>
-        </ul>
-      </div>
-
-      <!-- Add more tag sections as needed -->
+      <!-- Tag sections will be dynamically generated -->
     </section>
 
     <!-- Subtag View -->
     <section id="subtag-view" class="content-view">
       <h3>Posts by Subtag</h3>
       <div class="subtag-list">
-        <a href="#note-taking" class="subtag">note-taking</a>
-        <a href="#zettelkasten" class="subtag">zettelkasten</a>
-        <a href="#digital-minimalism" class="subtag">digital-minimalism</a>
-        <a href="#markdown" class="subtag">markdown</a>
-        <a href="#static-sites" class="subtag">static-sites</a>
-        <a href="#typography" class="subtag">typography</a>
-        <a href="#css" class="subtag">css</a>
+        <!-- Subtags will be dynamically loaded here -->
       </div>
 
-      <div id="note-taking" class="subtag-section">
-        <h4>note-taking</h4>
-        <ul class="post-list">
-          <li>
-            <span class="date">2023-07-15</span>
-            <a href="#" class="post-title">Notes on building a second brain</a>
-          </li>
-          <li>
-            <span class="date">2023-05-01</span>
-            <a href="#" class="post-title">Getting started with personal knowledge management</a>
-          </li>
-        </ul>
-      </div>
-
-      <!-- Add more subtag sections as needed -->
+      <!-- Subtag sections will be dynamically generated -->
     </section>
 
     <!-- Admin Panel (Hidden by default) -->
@@ -230,8 +129,10 @@
     <p>&copy; 2023 My Second Brain</p>
   </footer>
 
+  <script src="assets/js/data-storage.js"></script>
   <script src="assets/js/markdown.js"></script>
   <script src="assets/js/search.js"></script>
+  <script src="assets/js/post-generator.js"></script>
   <script src="assets/js/main.js"></script>
 </body>
 </html>

@@ -5,68 +5,22 @@
 
 class SearchEngine {
   constructor() {
-    this.searchIndex = [];
     this.searchable = false;
   }
   
   /**
-   * Initialize search with mock data
-   * In a real implementation, this would load from a JSON index
+   * Initialize search engine
    */
   init() {
-    // Mock search index for demonstration
-    this.searchIndex = [
-      {
-        id: 'post-1',
-        title: 'Notes on building a second brain',
-        date: '2023-07-15',
-        tags: ['productivity', 'knowledge-management'],
-        subtags: ['note-taking', 'zettelkasten'],
-        content: 'The concept of a "second brain" has gained significant traction in productivity circles. At its core, it\'s about creating an external system to store, organize, and retrieve the information we consume, helping us think more clearly and create more effectively.',
-        url: 'post-template.html'
-      },
-      {
-        id: 'post-2',
-        title: 'Reflections on minimalism',
-        date: '2023-06-30',
-        tags: ['lifestyle', 'philosophy'],
-        subtags: ['digital-minimalism', 'simplicity'],
-        content: 'Minimalism is more than an aesthetic choice; it's a mindset that prioritizes value over volume. By deliberately choosing what to include in our lives, we create space for what truly matters.',
-        url: '#'
-      },
-      {
-        id: 'post-3',
-        title: 'Understanding plain text productivity',
-        date: '2023-06-10',
-        tags: ['productivity', 'tools'],
-        subtags: ['markdown', 'text-files'],
-        content: 'Plain text systems offer surprising advantages for productivity: they're portable, future-proof, and distraction-free. By embracing the constraints of simple text files, we can focus on what matters: our thoughts and ideas.',
-        url: '#'
-      },
-      {
-        id: 'post-4',
-        title: 'Digital gardens vs traditional blogs',
-        date: '2023-05-22',
-        tags: ['writing', 'web'],
-        subtags: ['digital-gardens', 'publishing'],
-        content: 'Unlike chronological blogs, digital gardens are non-linear, continuously evolving collections of thoughts and notes. They emphasize connection and growth over temporal organization.',
-        url: '#'
-      },
-      {
-        id: 'post-5',
-        title: 'Getting started with personal knowledge management',
-        date: '2023-05-01',
-        tags: ['productivity', 'knowledge-management'],
-        subtags: ['note-taking', 'organization'],
-        content: 'Personal knowledge management is about systematically capturing, organizing, and sharing what you know and learn. It begins with reliable capture methods and requires consistent maintenance.',
-        url: '#'
-      }
-    ];
-    
-    this.searchable = true;
-    
-    // Set up search UI if it exists
-    this.setupSearchUI();
+    // Check if dataStorage is available
+    if (typeof dataStorage !== 'undefined') {
+      this.searchable = true;
+      
+      // Set up search UI if it exists
+      this.setupSearchUI();
+    } else {
+      console.error('Search requires dataStorage module');
+    }
   }
   
   /**
@@ -189,15 +143,18 @@ class SearchEngine {
   search(query) {
     if (!this.searchable) return [];
     
+    // Get posts from storage
+    const posts = dataStorage.getPosts();
+    
     const terms = query.toLowerCase().split(' ');
-    return this.searchIndex
+    return posts
       .filter(item => {
         // Check if all terms are found somewhere in the item
         return terms.every(term => 
           item.title.toLowerCase().includes(term) ||
           item.content.toLowerCase().includes(term) ||
           item.tags.some(tag => tag.toLowerCase().includes(term)) ||
-          item.subtags.some(subtag => subtag.toLowerCase().includes(term))
+          (item.subtags && item.subtags.some(subtag => subtag.toLowerCase().includes(term)))
         );
       })
       .map(item => {
