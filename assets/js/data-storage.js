@@ -158,22 +158,8 @@ class DataStorage {
       post.id = this.generateId('post');
     }
 
-    // Generate a unique-ish URL/slug if missing or placeholder
-    if (!post.url || post.url === '#') {
-      const slug = this.generateSlug(post.title);
-      
-      // Check if posts directory exists in localStorage
-      const postsDirectoryExists = localStorage.getItem('posts-directory-exists');
-      
-      if (!postsDirectoryExists) {
-        // In a real environment, we would create the directory here
-        // For this simulation, we'll just set a flag
-        localStorage.setItem('posts-directory-exists', 'true');
-      }
-      
-      // Use the correct path format
-      post.url = `${slug}.html`;
-    }
+    // Set the URL to use the post.html template with the post ID
+    post.url = `post.html?id=${post.id}`;
 
     this.posts.push(post);
     this.savePosts();

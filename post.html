@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Loading... - MyCave</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <meta name="description" content="Loading post content...">
+  <style>
+    /* Additional styles for post content */
+    .post-content {
+      margin-top: var(--spacing-unit);
+    }
+    
+    .post-content h2 {
+      font-size: calc(var(--base-size) * var(--scale-ratio));
+      font-weight: 600;
+      margin: calc(var(--spacing-unit) * 1.5) 0 var(--spacing-unit);
+      color: var(--text-color);
+    }
+    
+    .post-content h3 {
+      font-size: calc(var(--base-size) * 1.1);
+      margin: var(--spacing-unit) 0 calc(var(--spacing-unit) * 0.5);
+    }
+    
+    .post-content p {
+      margin-bottom: var(--spacing-unit);
+    }
+    
+    .post-content ul, .post-content ol {
+      margin-bottom: var(--spacing-unit);
+      padding-left: calc(var(--spacing-unit) * 1.5);
+    }
+    
+    .post-content li {
+      margin-bottom: calc(var(--spacing-unit) * 0.25);
+    }
+    
+    .post-content blockquote {
+      border-left: 3px solid var(--accent-color);
+      padding-left: var(--spacing-unit);
+      margin-bottom: var(--spacing-unit);
+      color: var(--secondary-text);
+    }
+    
+    .post-content pre {
+      background-color: var(--subtle-bg);
+      padding: var(--spacing-unit);
+      border-radius: 3px;
+      overflow-x: auto;
+      margin-bottom: var(--spacing-unit);
+    }
+    
+    .post-content code {
+      font-family: monospace;
+      background-color: var(--subtle-bg);
+      padding: 2px 4px;
+      border-radius: 3px;
+    }
+    
+    .post-content pre code {
+      padding: 0;
+      background-color: transparent;
+    }
+    
+    .post-meta {
+      margin-bottom: var(--spacing-unit);
+      color: var(--secondary-text);
+      font-size: calc(var(--base-size) * 0.9);
+    }
+    
+    .post-navigation {
+      display: flex;
+      justify-content: space-between;
+      margin-top: calc(var(--spacing-unit) * 2);
+      padding-top: var(--spacing-unit);
+      border-top: 1px solid var(--border-color);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>MyCave</h1>
+    <h2>A collection of thoughts, notes, and ideas</h2>
+    <nav>
+      <a href="index.html">Home</a> |
+      <a href="#about">About</a> |
+      <a href="https://github.com/aayush9753">GitHub</a>
+    </nav>
+  </header>
+
+  <main>
+    <article id="post-content">
+      <div class="loading">Loading post content...</div>
+    </article>
+  </main>
+
+  <footer>
+    <p>&copy; 2023 MyCave</p>
+  </footer>
+
+  <script src="assets/js/data-storage.js"></script>
+  <script src="assets/js/markdown.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Get the post ID from the URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const postId = urlParams.get('id');
+      
+      if (!postId) {
+        document.getElementById('post-content').innerHTML = '<p>Error: No post ID specified</p>';
+        return;
+      }
+      
+      // Get the post from storage
+      const post = dataStorage.getPosts().find(p => p.id === postId);
+      
+      if (!post) {
+        document.getElementById('post-content').innerHTML = '<p>Error: Post not found</p>';
+        return;
+      }
+      
+      // Update page title
+      document.title = `${post.title} - MyCave`;
+      
+      // Update meta description
+      document.querySelector('meta[name="description"]').content = post.content.substring(0, 160);
+      
+      // Render the post content
+      const postHtml = `
+        <header class="post-header">
+          <h1>${post.title}</h1>
+          <div class="post-meta">
+            <span class="date">${post.date}</span>
+            <div class="tags">
+              ${post.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+              ${post.subtags.map(subtag => `<span class="subtag">${subtag}</span>`).join('')}
+            </div>
+          </div>
+        </header>
+        
+        <div class="post-content">
+          ${markdownRenderer.render(post.content)}
+        </div>
+      `;
+      
+      document.getElementById('post-content').innerHTML = postHtml;
+    });
+  </script>
+</body>
+</html> 
