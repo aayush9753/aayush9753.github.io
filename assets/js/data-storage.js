@@ -85,6 +85,7 @@ class DataStorage {
     // Check admin status
     const adminStatus = localStorage.getItem(this.ADMIN_KEY);
     this.isAdmin = adminStatus === 'true';
+    console.log('Admin status on init:', this.isAdmin);
   }
   
   /**
@@ -264,7 +265,7 @@ class DataStorage {
    */
   setAdminStatus(isAdmin) {
     this.isAdmin = isAdmin;
-    localStorage.setItem(this.ADMIN_KEY, isAdmin);
+    localStorage.setItem(this.ADMIN_KEY, isAdmin.toString());
   }
   
   /**
@@ -282,7 +283,10 @@ class DataStorage {
     const isCorrect = password === 'admin123'; // Example password
     
     if (isCorrect) {
+      console.log('Password correct, setting admin status to true');
       this.setAdminStatus(true);
+    } else {
+      console.log('Password incorrect');
     }
     
     return isCorrect;

@@ -245,12 +245,18 @@ function setupAdminPanel() {
   const cancelPostBtn = document.getElementById('cancel-post');
   
   // Check if already logged in
+  console.log('Checking admin status:', dataStorage.checkAdminStatus());
   if (dataStorage.checkAdminStatus()) {
+    console.log('Admin already logged in, showing management panel');
     loginSection.style.display = 'none';
     contentManagement.classList.remove('hidden');
     
     // Load and display drafts and posts
     renderDrafts();
+  } else {
+    console.log('Admin not logged in, showing login screen');
+    loginSection.style.display = 'block';
+    contentManagement.classList.add('hidden');
   }
   
   // Handle login
@@ -261,16 +267,26 @@ function setupAdminPanel() {
       const success = dataStorage.adminLogin(password);
       
       if (success) {
+        // Hide login section and show content management
         loginSection.style.display = 'none';
         contentManagement.classList.remove('hidden');
         
-        // Load and display drafts
+        // Load and display drafts and posts
         renderDrafts();
+        
+        console.log('Admin login successful');
       } else {
         alert('Incorrect password. Access denied.');
       }
     } else {
       alert('Please enter the admin password.');
+    }
+  });
+  
+  // Also handle login on Enter key press in password field
+  document.getElementById('admin-password').addEventListener('keyup', function(event) {
+    if (event.key === 'Enter') {
+      loginBtn.click();
     }
   });
   
@@ -285,9 +301,26 @@ function setupAdminPanel() {
       dataStorage.adminLogout();
       loginSection.style.display = 'block';
       contentManagement.classList.add('hidden');
+      console.log('Admin logged out');
     });
     
     contentManagement.insertBefore(logoutBtn, contentManagement.firstChild);
+  }
+  
+  // Ensure drafts section exists
+  if (!document.getElementById('drafts-section')) {
+    const draftsSection = document.createElement('div');
+    draftsSection.id = 'drafts-section';
+    draftsSection.innerHTML = '<h4>Your Drafts</h4>';
+    contentManagement.appendChild(draftsSection);
+  }
+  
+  // Ensure posts section exists
+  if (!document.getElementById('posts-section')) {
+    const postsSection = document.createElement('div');
+    postsSection.id = 'posts-section';
+    postsSection.innerHTML = '<h4>Manage Published Posts</h4>';
+    contentManagement.appendChild(postsSection);
   }
   
   // Show new post form
