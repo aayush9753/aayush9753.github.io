@@ -80,56 +80,68 @@
     </section>
 
     <!-- Admin Panel -->
-    <section id="admin-panel" class="content-view">
-      <h3>Admin Panel</h3>
+    <section id="admin-panel" class="admin-panel">
       <div id="login-section">
-        <input type="password" id="admin-password" placeholder="Enter admin password">
-        <button id="login-btn">Login</button>
+        <h3>Admin Login</h3>
+        <div class="form-group">
+          <label for="admin-password">Password:</label>
+          <input type="password" id="admin-password" placeholder="Enter admin password">
+        </div>
+        <button id="login-btn" class="primary-btn">Login</button>
       </div>
+      
       <div id="content-management" class="hidden">
-        <button id="new-post-btn">Create New Post</button>
-        <div id="drafts-section">
-          <h4>Your Drafts</h4>
-          <!-- Drafts will be listed here -->
-        </div>
-        <div id="posts-section">
-          <h4>Manage Published Posts</h4>
-          <!-- Posts will be listed here -->
-        </div>
+        <button id="new-post-btn" class="primary-btn">Create New Post</button>
+        
         <div id="post-form" class="hidden">
-          <h4>Create/Edit Post</h4>
+          <h3>Create/Edit Post</h3>
           <form id="post-editor">
             <div class="form-group">
               <label for="post-title">Title:</label>
-              <input type="text" id="post-title" required>
+              <input type="text" id="post-title" required placeholder="Enter post title">
             </div>
+            
             <div class="form-group">
               <label for="post-date">Date:</label>
               <input type="date" id="post-date" required>
             </div>
+            
             <div class="form-group">
-              <label for="post-tags">Tags (comma separated):</label>
-              <input type="text" id="post-tags">
+              <label for="post-tags">Tags (comma-separated):</label>
+              <input type="text" id="post-tags" placeholder="e.g., tutorial, guide, how-to">
             </div>
+            
             <div class="form-group">
-              <label for="post-subtags">Subtags (comma separated):</label>
-              <input type="text" id="post-subtags">
+              <label for="post-subtags">Subtags (comma-separated):</label>
+              <input type="text" id="post-subtags" placeholder="e.g., javascript, css, html">
             </div>
+            
             <div class="form-group">
               <label for="post-content">Content (Markdown):</label>
-              <textarea id="post-content" rows="10" required></textarea>
+              <textarea id="post-content" rows="15" required placeholder="Write your post content in Markdown format"></textarea>
             </div>
-            <div class="form-group">
+            
+            <div class="form-group checkbox">
               <label>
-                <input type="checkbox" id="post-draft">
-                Save as draft
+                <input type="checkbox" id="post-draft"> Save as draft
               </label>
             </div>
+            
             <div class="form-actions">
-              <button type="submit">Save Post</button>
-              <button type="button" id="cancel-post">Cancel</button>
+              <button type="submit" class="primary-btn">Save</button>
+              <button type="button" id="cancel-post" class="secondary-btn">Cancel</button>
             </div>
           </form>
+        </div>
+        
+        <div id="drafts-section">
+          <h4>Drafts</h4>
+          <p class="section-description">Unpublished content that you're working on.</p>
+        </div>
+        
+        <div id="posts-section">
+          <h4>Published Posts</h4>
+          <p class="section-description">Your published content that's visible to everyone.</p>
         </div>
       </div>
     </section>

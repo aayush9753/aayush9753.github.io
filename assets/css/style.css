@@ -3,18 +3,19 @@
 
 /* CSS Variables for consistent theming */
 :root {
-  /* Colors */
-  --background-color: #FFFFFF;
-  --text-color: #333333;
-  --accent-color: #0066CC;
-  --secondary-text: #666666;
-  --subtle-bg: #F0F0F0;
-  --border-color: #EEEEEE;
+  /* Color scheme */
+  --primary-color: #0366d6;
+  --text-color: #24292e;
+  --secondary-text: #586069;
+  --border-color: #e1e4e8;
+  --subtle-bg: #f6f8fa;
+  --accent-color: #0366d6;
+  --code-bg: #f6f8fa;
   
   /* Typography */
   --base-size: 16px;
   --scale-ratio: 1.2;
-  --line-height: 1.5;
+  --line-height: 1.6;
   
   /* Spacing */
   --spacing-unit: 1rem;
@@ -29,11 +30,11 @@
 
 /* Base Typography */
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
   font-size: var(--base-size);
   line-height: var(--line-height);
   color: var(--text-color);
-  background-color: var(--background-color);
+  background-color: white;
   max-width: 650px;
   margin: 0 auto;
   padding: calc(var(--spacing-unit) * 2);
@@ -81,49 +82,82 @@ a:hover {
 
 /* Layout Components */
 header {
-  margin-bottom: calc(var(--spacing-unit) * 2);
+  background-color: white;
+  border-bottom: 1px solid var(--border-color);
+  padding: var(--spacing-unit);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+header h1 {
+  margin: 0;
+  font-size: calc(var(--base-size) * 1.5);
+  font-weight: 600;
+}
+
+header h2 {
+  margin: calc(var(--spacing-unit) * 0.25) 0 0;
+  font-size: var(--base-size);
+  font-weight: normal;
+  color: var(--secondary-text);
 }
 
 nav {
   margin-top: var(--spacing-unit);
 }
 
+nav a {
+  color: var(--primary-color);
+  text-decoration: none;
+  margin-right: var(--spacing-unit);
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
 main {
-  min-height: 70vh;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--spacing-unit);
 }
 
 footer {
-  margin-top: calc(var(--spacing-unit) * 3);
-  padding-top: var(--spacing-unit);
-  border-top: 1px solid var(--border-color);
-  font-size: calc(var(--base-size) * 0.9);
+  text-align: center;
+  padding: var(--spacing-unit);
   color: var(--secondary-text);
+  font-size: calc(var(--base-size) * 0.9);
+  border-top: 1px solid var(--border-color);
+  margin-top: calc(var(--spacing-unit) * 2);
 }
 
 /* View Toggles */
 .view-toggles {
   display: flex;
-  margin-bottom: calc(var(--spacing-unit) * 1.5);
+  gap: calc(var(--spacing-unit) * 0.5);
+  margin-bottom: var(--spacing-unit);
   border-bottom: 1px solid var(--border-color);
+  padding-bottom: calc(var(--spacing-unit) * 0.5);
 }
 
 .view-toggles button {
   background: none;
   border: none;
   padding: calc(var(--spacing-unit) * 0.5) var(--spacing-unit);
-  font-size: var(--base-size);
-  color: var(--secondary-text);
   cursor: pointer;
-  border-bottom: 2px solid transparent;
+  color: var(--secondary-text);
+  font-size: var(--base-size);
+  border-radius: 3px;
 }
 
 .view-toggles button:hover {
-  color: var(--accent-color);
+  background-color: var(--subtle-bg);
 }
 
 .view-toggles button.active {
-  color: var(--accent-color);
-  border-bottom: 2px solid var(--accent-color);
+  color: var(--primary-color);
+  font-weight: 500;
 }
 
 /* Content Views */
@@ -138,12 +172,13 @@ footer {
 /* Post Lists */
 .post-list {
   list-style: none;
-  margin-bottom: calc(var(--spacing-unit) * 2);
+  padding: 0;
+  margin: 0;
 }
 
 .post-list li {
-  margin-bottom: calc(var(--spacing-unit) * 0.75);
-  padding-bottom: calc(var(--spacing-unit) * 0.75);
+  margin-bottom: var(--spacing-unit);
+  padding-bottom: var(--spacing-unit);
   border-bottom: 1px solid var(--border-color);
 }
 
@@ -151,33 +186,44 @@ footer {
   border-bottom: none;
 }
 
-.date {
-  display: inline-block;
-  min-width: 6.5rem;
-  color: var(--secondary-text);
-  font-size: calc(var(--base-size) * 0.9);
+.post-title {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: calc(var(--base-size) * 1.1);
+  display: block;
+  margin-bottom: calc(var(--spacing-unit) * 0.25);
 }
 
-.post-title {
-  font-weight: 500;
-  display: block;
-  margin: calc(var(--spacing-unit) * 0.25) 0;
+.post-title:hover {
+  text-decoration: underline;
+}
+
+.date {
+  color: var(--secondary-text);
+  font-size: calc(var(--base-size) * 0.9);
+  margin-right: var(--spacing-unit);
 }
 
 /* Tags */
 .tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--spacing-unit) * 0.25);
   margin-top: calc(var(--spacing-unit) * 0.25);
 }
 
 .tag, .subtag {
-  display: inline-block;
   font-size: calc(var(--base-size) * 0.8);
+  padding: 2px 8px;
+  border-radius: 12px;
   background-color: var(--subtle-bg);
-  padding: calc(var(--spacing-unit) * 0.15) calc(var(--spacing-unit) * 0.5);
-  margin-right: calc(var(--spacing-unit) * 0.25);
-  margin-bottom: calc(var(--spacing-unit) * 0.25);
-  border-radius: 3px;
   color: var(--secondary-text);
+}
+
+.subtag {
+  background-color: #e1ecf4;
+  color: #2c5777;
 }
 
 a.tag:hover, a.subtag:hover {
@@ -203,11 +249,24 @@ a.tag:hover, a.subtag:hover {
   margin-top: calc(var(--spacing-unit) * 2);
   padding: var(--spacing-unit);
   background-color: var(--subtle-bg);
-  border-radius: 5px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+}
+
+#login-section {
+  margin-bottom: var(--spacing-unit);
+}
+
+#admin-password {
+  padding: calc(var(--spacing-unit) * 0.5);
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  font-size: var(--base-size);
+  margin-right: calc(var(--spacing-unit) * 0.5);
 }
 
 #login-btn, #new-post-btn {
-  background-color: var(--accent-color);
+  background-color: var(--primary-color);
   color: white;
   border: none;
   padding: calc(var(--spacing-unit) * 0.5) var(--spacing-unit);
@@ -217,7 +276,7 @@ a.tag:hover, a.subtag:hover {
 }
 
 #login-btn:hover, #new-post-btn:hover {
-  opacity: 0.9;
+  background-color: #0256b3;
 }
 
 /* Form Elements */
@@ -229,6 +288,7 @@ label {
   display: block;
   margin-bottom: calc(var(--spacing-unit) * 0.25);
   font-weight: 500;
+  color: var(--text-color);
 }
 
 input[type="text"],
@@ -240,15 +300,18 @@ textarea {
   border-radius: 3px;
   font-family: inherit;
   font-size: var(--base-size);
+  background-color: white;
 }
 
 textarea {
   resize: vertical;
+  min-height: 200px;
 }
 
 .form-actions {
   display: flex;
   gap: var(--spacing-unit);
+  margin-top: calc(var(--spacing-unit) * 2);
 }
 
 .form-actions button {
@@ -260,7 +323,7 @@ textarea {
 }
 
 .form-actions button[type="submit"] {
-  background-color: var(--accent-color);
+  background-color: var(--primary-color);
   color: white;
 }
 
@@ -269,14 +332,77 @@ textarea {
   color: var(--text-color);
 }
 
+/* Admin Tables */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--spacing-unit);
+  background-color: white;
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: calc(var(--spacing-unit) * 0.5);
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.admin-table th {
+  font-weight: 500;
+  background-color: var(--subtle-bg);
+}
+
+.admin-table button {
+  margin-right: 5px;
+  padding: 3px 8px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: calc(var(--base-size) * 0.8);
+}
+
+.admin-table .edit-btn {
+  background-color: #2ea44f;
+  color: white;
+}
+
+.admin-table .publish-btn {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.admin-table .delete-btn {
+  background-color: #cb2431;
+  color: white;
+}
+
+/* Markdown Preview */
+.markdown-preview {
+  margin-top: var(--spacing-unit);
+  padding: var(--spacing-unit);
+  background-color: var(--subtle-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+}
+
+.preview-content {
+  background-color: white;
+  padding: var(--spacing-unit);
+  border-radius: 3px;
+  border: 1px solid var(--border-color);
+}
+
 /* Responsive Design */
 @media (max-width: 600px) {
   body {
-    padding: var(--spacing-unit);
+    padding: 0;
   }
   
   .view-toggles {
     overflow-x: auto;
+    padding-bottom: calc(var(--spacing-unit) * 0.25);
   }
   
   .view-toggles button {
@@ -288,5 +414,238 @@ textarea {
     min-width: 5rem;
     display: block;
     margin-bottom: calc(var(--spacing-unit) * 0.25);
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+  
+  .form-actions button {
+    width: 100%;
+  }
+}
+
+/* Admin Panel Styles */
+.admin-panel {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.admin-panel h3 {
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+}
+
+.admin-panel h4 {
+  margin: 1.5rem 0 0.5rem;
+  color: var(--text-primary);
+}
+
+.section-description {
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+/* Login Section */
+#login-section {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Form Styles */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.form-group input[type="text"],
+.form-group input[type="password"],
+.form-group input[type="date"],
+.form-group textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 1rem;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(var(--accent-rgb), 0.1);
+}
+
+.form-group.checkbox {
+  display: flex;
+  align-items: center;
+}
+
+.form-group.checkbox label {
+  margin: 0;
+  margin-left: 0.5rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+/* Button Styles */
+.primary-btn,
+.secondary-btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.primary-btn {
+  background: var(--accent-color);
+  color: white;
+}
+
+.primary-btn:hover {
+  background: var(--accent-hover);
+}
+
+.secondary-btn {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.secondary-btn:hover {
+  background: var(--bg-hover);
+}
+
+/* Table Styles */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  background: var(--bg-primary);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.admin-table th {
+  background: var(--bg-secondary);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.admin-table tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-table tr:hover {
+  background: var(--bg-hover);
+}
+
+/* Action Buttons */
+.edit-btn,
+.publish-btn,
+.delete-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-right: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.edit-btn {
+  background: var(--accent-color);
+  color: white;
+}
+
+.edit-btn:hover {
+  background: var(--accent-hover);
+}
+
+.publish-btn {
+  background: #28a745;
+  color: white;
+}
+
+.publish-btn:hover {
+  background: #218838;
+}
+
+.delete-btn {
+  background: #dc3545;
+  color: white;
+}
+
+.delete-btn:hover {
+  background: #c82333;
+}
+
+/* Post Form */
+#post-form {
+  background: var(--bg-secondary);
+  padding: 2rem;
+  border-radius: 8px;
+  margin: 2rem 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#post-form textarea {
+  font-family: monospace;
+  line-height: 1.5;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .admin-panel {
+    padding: 1rem;
+  }
+  
+  .admin-table {
+    display: block;
+    overflow-x: auto;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+  
+  .form-actions button {
+    width: 100%;
+  }
+  
+  .edit-btn,
+  .publish-btn,
+  .delete-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
   }
 }

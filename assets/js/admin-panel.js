@@ -46,14 +46,14 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!document.getElementById('drafts-section')) {
       const draftsSection = document.createElement('div');
       draftsSection.id = 'drafts-section';
-      draftsSection.innerHTML = '<h4>Your Drafts</h4>';
+      draftsSection.innerHTML = '<h4>Drafts</h4><p class="section-description">Unpublished content that you\'re working on.</p>';
       contentManagement.appendChild(draftsSection);
     }
     
     if (!document.getElementById('posts-section')) {
       const postsSection = document.createElement('div');
       postsSection.id = 'posts-section';
-      postsSection.innerHTML = '<h4>Manage Published Posts</h4>';
+      postsSection.innerHTML = '<h4>Published Posts</h4><p class="section-description">Your published content that\'s visible to everyone.</p>';
       contentManagement.appendChild(postsSection);
     }
     
@@ -75,6 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const logoutBtn = document.createElement('button');
       logoutBtn.id = 'logout-btn';
       logoutBtn.textContent = 'Logout';
+      logoutBtn.className = 'secondary-btn';
       logoutBtn.style.marginLeft = '10px';
       logoutBtn.style.marginBottom = '15px';
       logoutBtn.addEventListener('click', handleLogout);
@@ -127,12 +128,13 @@ document.addEventListener('DOMContentLoaded', function() {
       
       // Render drafts and posts
       renderDrafts();
+      renderPosts();
       
       // Clear password field
       document.getElementById('admin-password').value = '';
     } else {
       console.log('Login failed');
-      alert('Incorrect password. Access denied. The correct password is "admin123".');
+      alert('Incorrect password. Access denied.');
     }
   }
   
@@ -165,6 +167,7 @@ document.addEventListener('DOMContentLoaded', function() {
       loginSection.style.display = 'none';
       contentManagement.classList.remove('hidden');
       renderDrafts();
+      renderPosts();
     } else {
       loginSection.style.display = 'block';
       contentManagement.classList.add('hidden');
@@ -188,6 +191,9 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('post-date').value = today;
     
     postForm.classList.remove('hidden');
+    
+    // Scroll to form
+    postForm.scrollIntoView({ behavior: 'smooth' });
   }
   
   /**
@@ -273,5 +279,229 @@ document.addEventListener('DOMContentLoaded', function() {
     // Reset form and hide it
     form.reset();
     document.getElementById('post-form').classList.add('hidden');
+  }
+  
+  /**
+   * Render drafts in the admin panel
+   */
+  function renderDrafts() {
+    const draftsSection = document.getElementById('drafts-section');
+    if (!draftsSection) return;
+    
+    // Clear existing content
+    draftsSection.innerHTML = '<h4>Drafts</h4><p class="section-description">Unpublished content that you\'re working on.</p>';
+    
+    // Get drafts from storage
+    const drafts = dataStorage.getDrafts();
+    
+    if (drafts.length === 0) {
+      draftsSection.innerHTML += '<p>No drafts yet.</p>';
+    } else {
+      // Create a table for drafts
+      const draftsTable = document.createElement('table');
+      draftsTable.className = 'admin-table';
+      draftsTable.innerHTML = `
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${drafts.map(draft => `
+            <tr data-id="${draft.id}">
+              <td>${draft.title || 'Untitled'}</td>
+              <td>${draft.date || 'No date'}</td>
+              <td>
+                <button class="edit-btn edit-draft-btn">Edit</button>
+                <button class="publish-btn publish-draft-btn">Publish</button>
+                <button class="delete-btn delete-draft-btn">Delete</button>
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      `;
+      
+      draftsSection.appendChild(draftsTable);
+      
+      // Add event listeners for draft actions
+      const editDraftBtns = draftsTable.querySelectorAll('.edit-draft-btn');
+      const publishDraftBtns = draftsTable.querySelectorAll('.publish-draft-btn');
+      const deleteDraftBtns = draftsTable.querySelectorAll('.delete-draft-btn');
+      
+      editDraftBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          const draftId = this.closest('tr').dataset.id;
+          editDraft(draftId);
+        });
+      });
+      
+      publishDraftBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          const draftId = this.closest('tr').dataset.id;
+          publishDraft(draftId);
+        });
+      });
+      
+      deleteDraftBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          const draftId = this.closest('tr').dataset.id;
+          deleteDraft(draftId);
+        });
+      });
+    }
+  }
+  
+  /**
+   * Render posts in the admin panel
+   */
+  function renderPosts() {
+    const postsSection = document.getElementById('posts-section');
+    if (!postsSection) return;
+    
+    // Clear existing content
+    postsSection.innerHTML = '<h4>Published Posts</h4><p class="section-description">Your published content that\'s visible to everyone.</p>';
+    
+    // Get posts from storage
+    const posts = dataStorage.getPosts();
+    
+    if (posts.length === 0) {
+      postsSection.innerHTML += '<p>No published posts yet.</p>';
+    } else {
+      // Create a table for posts
+      const postsTable = document.createElement('table');
+      postsTable.className = 'admin-table';
+      postsTable.innerHTML = `
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${posts.map(post => `
+            <tr data-id="${post.id}">
+              <td>${post.title || 'Untitled'}</td>
+              <td>${post.date || 'No date'}</td>
+              <td>
+                <button class="edit-btn edit-post-btn">Edit</button>
+                <button class="delete-btn delete-post-btn">Delete</button>
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      `;
+      
+      postsSection.appendChild(postsTable);
+      
+      // Add event listeners for post actions
+      const editPostBtns = postsTable.querySelectorAll('.edit-post-btn');
+      const deletePostBtns = postsTable.querySelectorAll('.delete-post-btn');
+      
+      editPostBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          const postId = this.closest('tr').dataset.id;
+          editPost(postId);
+        });
+      });
+      
+      deletePostBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          const postId = this.closest('tr').dataset.id;
+          deletePost(postId);
+        });
+      });
+    }
+  }
+  
+  /**
+   * Edit a draft
+   */
+  function editDraft(draftId) {
+    const draft = dataStorage.getDrafts().find(d => d.id === draftId);
+    if (!draft) return;
+    
+    const postForm = document.getElementById('post-form');
+    const postEditor = document.getElementById('post-editor');
+    
+    // Fill form with draft data
+    document.getElementById('post-title').value = draft.title || '';
+    document.getElementById('post-date').value = draft.date || '';
+    document.getElementById('post-tags').value = draft.tags.join(', ');
+    document.getElementById('post-subtags').value = draft.subtags.join(', ');
+    document.getElementById('post-content').value = draft.content || '';
+    document.getElementById('post-draft').checked = true;
+    
+    // Set edit mode
+    postEditor.dataset.editId = draftId;
+    postEditor.dataset.editType = 'edit-draft';
+    
+    // Show form
+    postForm.classList.remove('hidden');
+    
+    // Scroll to form
+    postForm.scrollIntoView({ behavior: 'smooth' });
+  }
+  
+  /**
+   * Edit a post
+   */
+  function editPost(postId) {
+    const post = dataStorage.getPosts().find(p => p.id === postId);
+    if (!post) return;
+    
+    const postForm = document.getElementById('post-form');
+    const postEditor = document.getElementById('post-editor');
+    
+    // Fill form with post data
+    document.getElementById('post-title').value = post.title || '';
+    document.getElementById('post-date').value = post.date || '';
+    document.getElementById('post-tags').value = post.tags.join(', ');
+    document.getElementById('post-subtags').value = post.subtags.join(', ');
+    document.getElementById('post-content').value = post.content || '';
+    document.getElementById('post-draft').checked = false;
+    
+    // Set edit mode
+    postEditor.dataset.editId = postId;
+    postEditor.dataset.editType = 'edit-post';
+    
+    // Show form
+    postForm.classList.remove('hidden');
+    
+    // Scroll to form
+    postForm.scrollIntoView({ behavior: 'smooth' });
+  }
+  
+  /**
+   * Publish a draft
+   */
+  function publishDraft(draftId) {
+    if (confirm('Are you sure you want to publish this draft?')) {
+      dataStorage.publishDraft(draftId);
+      renderDrafts();
+      renderPosts();
+    }
+  }
+  
+  /**
+   * Delete a draft
+   */
+  function deleteDraft(draftId) {
+    if (confirm('Are you sure you want to delete this draft?')) {
+      dataStorage.deleteDraft(draftId);
+      renderDrafts();
+    }
+  }
+  
+  /**
+   * Delete a post
+   */
+  function deletePost(postId) {
+    if (confirm('Are you sure you want to delete this post?')) {
+      dataStorage.deletePost(postId);
+      renderPosts();
+    }
   }
 });
