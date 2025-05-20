@@ -1,8 +1,6 @@
-remote_theme: hydecorp/hydejack@v9.0.4
 title: Research Reading Library
 description: A personal collection of research papers, articles, and reading notes
 lang: en
-logo: /assets/img/logo.png
 
 # SEO settings
 tagline: Organized research notes and paper summaries
@@ -12,11 +10,6 @@ keywords:
   - notes
   - academic
   - reading list
-
-# Customization
-accent_image: /assets/img/sidebar-bg.jpg
-accent_color: rgb(79,177,186)
-theme_color: rgb(25,55,71)
 
 # Site features
 search: true
@@ -42,7 +35,7 @@ defaults:
   - scope:
       path: ""
     values:
-      layout: page
+      layout: default
   - scope:
       path: ""
       type: papers
@@ -61,21 +54,11 @@ defaults:
 
 # Plugins
 plugins:
-  - jekyll-include-cache
   - jekyll-feed
   - jekyll-seo-tag
   - jekyll-sitemap
-  - jekyll-paginate
 
-# Hydejack settings
-hydejack:
-  dark_mode:
-    dynamic: true
-    sunrise: 6
-    sunset: 18
-  no_inline_css: true
-  no_page_style: true
-
+# Simple navigation
 menu:
   - title: Home
     url: /

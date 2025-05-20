@@ -1,22 +1,22 @@
 ---
-layout: page
+layout: default
 ---
 
 <article class="topic">
   <header class="topic-header">
-    <h1 class="topic-title">{{ page.title }}</h1>
+    <h1>{{ page.title }}</h1>
     
-    <div class="topic-meta">
-      {% if page.description %}
-      <p class="topic-description">{{ page.description }}</p>
-      {% endif %}
-    </div>
+    {% if page.description %}
+    <p>{{ page.description }}</p>
+    {% endif %}
     
     {% if page.tags.size > 0 %}
     <div class="topic-tags">
+      <p>Tags: 
       {% for tag in page.tags %}
-      <a href="/search/?q={{ tag | uri_escape }}" class="tag">{{ tag }}</a>
+        <span class="tag"><a href="/search/?q={{ tag | uri_escape }}">{{ tag }}</a></span>
       {% endfor %}
+      </p>
     </div>
     {% endif %}
   </header>
@@ -33,23 +33,23 @@ layout: page
     {% assign topic_papers = site.papers | where_exp: "paper", "paper.topics contains page.topic_id" | sort: "date" | reverse %}
     
     {% if topic_papers.size > 0 %}
-    <div class="papers-list">
+    <ul class="papers-list">
       {% for paper in topic_papers %}
-      <div class="paper-card">
-        <h3><a href="{{ paper.url | relative_url }}">{{ paper.title }}</a></h3>
-        <p class="paper-meta">
-          <span class="paper-authors">{{ paper.authors | join: ", " }}</span>
-          <span class="paper-date">{{ paper.date | date: "%Y" }}</span>
-        </p>
-        <p class="paper-abstract">{{ paper.abstract | truncate: 150 }}</p>
-        <div class="paper-tags">
+      <li>
+        <span class="date">{{ paper.date | date: "%Y-%m-%d" }}</span>
+        <a href="{{ paper.url | relative_url }}">{{ paper.title }}</a>
+        <span class="authors">{{ paper.authors | first }} et al.</span>
+        {% if paper.tags.size > 0 %}
+        <div class="tags">
+          Tags: 
           {% for tag in paper.tags %}
-          <span class="tag">{{ tag }}</span>
+          <span class="tag"><a href="/search/?q={{ tag | uri_escape }}">{{ tag }}</a></span>
           {% endfor %}
         </div>
-      </div>
+        {% endif %}
+      </li>
       {% endfor %}
-    </div>
+    </ul>
     {% else %}
     <p>No papers in this topic yet.</p>
     {% endif %}

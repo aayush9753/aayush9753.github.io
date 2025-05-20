@@ -1,3 +1,24 @@
 <!-- Custom head content -->
 <link rel="stylesheet" href="{{ '/assets/css/custom.css' | relative_url }}">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
+<style>
+  /* Enforce monospace font throughout the site */
+  body, h1, h2, h3, h4, h5, h6, p, a, li, table, input, button, textarea, pre, code {
+    font-family: monospace !important;
+  }
+  
+  /* Ensure all text is black and backgrounds are white */
+  body {
+    color: black !important;
+    background-color: white !important;
+  }
+  
+  /* Only use blue for links */
+  a {
+    color: blue !important;
+    text-decoration: none !important;
+  }
+  
+  a:hover {
+    text-decoration: underline !important;
+  }
+</style>
