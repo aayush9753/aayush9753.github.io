@@ -63,86 +63,7 @@ Triton Inference Server enables teams to deploy any AI model from multiple deep 
 
 Triton Inference Server delivers optimized performance for many query types, including real time, batched, ensembles and audio/video streaming. Triton inference Server is part of NVIDIA AI Enterprise, a software platform that accelerates the data science pipeline and streamlines the development and deployment of production AI.
 
-## Frameworks Overview
-
-<details>
-<summary>Click to expand framework details</summary>
-
-### 1. TensorRT
-**What it is**: NVIDIA's deep learning inference optimizer and runtime engine
-- **Purpose**: Optimizes trained neural networks for faster inference on NVIDIA GPUs
-- **Key features**:
-  - Layer fusion and kernel optimization
-  - Precision calibration (FP32, FP16, INT8)
-  - Dynamic tensor memory management
-  - Highly optimized for NVIDIA hardware
-
-### 2. TensorFlow
-**What it is**: Full-featured deep learning frameworks for building and training models. By Google.
-- Static computation graph (TF 1.x) or eager execution (TF 2.x)
-- Extensive deployment tools (TF Serving, TF Lite)
-- Tightly integrated with Google ecosystem
-- Strong production focus
-
-### 3. PyTorch
-**What it is**: Full-featured deep learning frameworks for building and training models by Meta
-- Dynamic computation graph by default
-- More Python-native feel
-- Popular in research communities
-- Growing deployment tools (TorchServe, TorchScript)
-- **Use case**: When you need maximum inference performance on NVIDIA GPUs
-
-### 4. ONNX (Open Neural Network Exchange)
-**What it is**: An open standard format for representing machine learning models
-- **Purpose**: Enable model interoperability between different frameworks
-- **Key features**:
-  - Framework-agnostic model representation
-  - Supported by most major ML frameworks
-  - Includes ONNX Runtime for optimized inference
-- **Use case**: When you need to train in one framework and deploy in another
-
-### 5. OpenVINO
-**What it is**: Intel's toolkit for optimizing and deploying deep learning models
-- **Purpose**: Maximize performance on Intel hardware (CPUs, GPUs, VPUs)
-- **Key features**:
-  - Model Optimizer for converting from various frameworks
-  - Inference Engine for deployment
-  - Hardware-specific optimizations
-  - Especially strong for computer vision tasks
-- **Use case**: When targeting Intel hardware for deployment
-
-### 6. RAPIDS FIL (Forest Inference Library)
-**What it is**: Part of NVIDIA's RAPIDS suite for GPU-accelerated data science
-- **Purpose**: Accelerate tree-based ML models (not deep learning)
-- **Key features**:
-  - Optimized for Random Forests, XGBoost, LightGBM, etc.
-  - Can import models from scikit-learn, XGBoost
-  - Up to 100x faster than CPU implementations
-- **Use case**: When using tree-based models (not neural networks) and needing GPU acceleration
-
-### Key Differences
-
-| Framework/Tool | Primary Purpose | ML Model Types | Development/Deployment | Hardware Focus |
-|----------------|-----------------|----------------|------------------------|----------------|
-| TensorRT | Inference optimization | Neural networks | Deployment only | NVIDIA GPUs |
-| TensorFlow | Complete ML workflow | Primarily neural networks | Both | Hardware-agnostic with GPU support |
-| PyTorch | Complete ML workflow | Primarily neural networks | Both | Hardware-agnostic with GPU support |
-| ONNX | Model interoperability | Various ML models | Model exchange | Hardware-agnostic |
-| OpenVINO | Inference optimization | Neural networks | Deployment only | Intel hardware |
-| RAPIDS FIL | Inference acceleration | Tree-based models only | Deployment only | NVIDIA GPUs |
-
-### How They Work Together
-
-In a typical ML workflow, you might:
-1. Build and train models in **TensorFlow** or **PyTorch**
-2. Convert the model to **ONNX** format for interoperability
-3. Optimize for deployment using **TensorRT** (NVIDIA), **OpenVINO** (Intel), or other platform-specific tools
-4. Deploy the optimized model in production
-
-For tree-based models (not deep learning), you would use traditional ML libraries like scikit-learn or XGBoost for training, then potentially use **RAPIDS FIL** for accelerated inference on NVIDIA GPUs.
-
-The choice between these tools depends on your specific hardware, model type, and performance requirements.
-</details>
+### [Frameworks Overview]({{ site.baseurl }}/random/model-frameworks/)
 
 ## Triton Architecture
 
@@ -198,77 +119,8 @@ Triton Inference Server's architecture consists of several key components:
 
 ![Triton Architecture]({{ site.baseurl }}/assets/images/triton.png)
 
-## Transport Protocols for Triton
+### [Transport Protocols for Triton]({{ site.baseurl }}/random/transport-protocol/)
 
-<details>
-<summary>Click to expand transport protocol comparison</summary>
-
-**Fastest path in practice:**
-For raw-audio (or any large binary) payloads, the lowest end-to-end latency comes from **embedding Triton with the in-process C API and passing the audio in shared memory**. When you must go over the network, **gRPC slightly out-runs HTTP/REST** because it is a binary protocol, supports bidirectional streaming, and avoids the JSON/base-64 tax; using HTTP with the *binary tensor data* extension narrows—but rarely erases—that gap. The table below details the trade-offs and why most production deployments pick **gRPC (+ shared-memory)** for audio pipelines, reserving the C API for same-host inference and HTTP for browser or firewall-restricted clients.
-
-### Protocol Options at a Glance
-
-| Use case                                      | API choice                                                           | Why it is (or isn't) fastest                                                                                                                                                                               |
-| --------------------------------------------- | -------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Same process / same host**                  | **C API**                                                            | No network stack; your app links `libtritonserver.so`, so only a memcpy separates you from the backend. NVIDIA's docs state HTTP/gRPC "introduce additional latency… C API avoids that" ([NVIDIA Docs][1]) |
-| **Remote, latency-sensitive audio streaming** | **gRPC**                                                             | Binary Protobuf frames, persistent HTTP/2 connection, optional bidirectional *streaming* RPC that keeps every chunk on the same server ([NVIDIA Docs][2])                                                  |
-| Remote, firewall-friendly / browsers          | HTTP/REST                                                            | Works everywhere; use *binary tensor* extension to skip base-64 ([NVIDIA Docs][3])                                                                                                                         |
-| Any local client that can mmap                | **Shared-memory extension** (system / CUDA) with either gRPC or HTTP | Payload lives in a POSIX shm segment; the RPC transmits only a handle—huge win for multi-MB audio blocks ([NVIDIA Docs][4])                                                                                |
-
-### How the Bytes Travel
-
-#### gRPC
-
-* One Protobuf message per request; audio enters a `BYTES` tensor—already raw, no intermediate encoding.
-* The *streaming* variant keeps a single socket open so your 50 × 10 ms chunks land on the same GPU-worker with no re-handshake cost ([NVIDIA Docs][2]).
-
-#### HTTP/REST
-
-* Default payload is JSON + base-64, which inflates size ≈ 33 %.
-* Activate **`binary_tensor_data`**; Triton will accept raw little-endian tensor bytes appended to the JSON header ([NVIDIA Docs][3]). This cuts transfer time but you still pay HTTP header parsing and one TCP handshake per connection (unless you reuse HTTP/1.1 keep-alive or HTTP/2 multiplexing).
-
-#### In-process C API
-
-* Your code calls `TRITONSERVER_InferAsync()` on a handle returned by `TRITONSERVER_ServerNew()` ([NVIDIA Docs][5]).
-* No sockets, no serialization; the only copies are whatever you perform before `TRITONSERVER_InferenceRequestSetSharedMemory()`.
-
-#### Shared Memory Extras
-
-* Register a region once (`RegisterSystemSharedMemory`) then send its name to Triton for every inference ([GitHub][6]).
-* Works with HTTP or gRPC, but is especially useful when client and server share the same node or GPU (CUDA-shm).
-
-### Quantitative Evidence
-
-* **C API avoids transport cost:** NVIDIA's perf-analyzer example shows the *same* ResNet-50 model yielding **only 20 µs transport overhead** in C-API mode, while HTTP/gRPC add dozens of microseconds ([NVIDIA Docs][1]).
-* **HTTP CPU overhead at scale:** Users report high `sy` CPU and latency growth when concurrency rises under HTTP, not under gRPC ([GitHub][7]).
-* **gRPC improvements closed the gap:** By mid-2024 a PR eliminated earlier gRPC slow-start issues; maintainers now see "no noticeable difference between gRPC and HTTP on the server" for most models, leaving serialization cost as the main delta ([GitHub][8]).
-* **Docs still flag extra latency:** The official benchmarking guide reiterates that both remote protocols add latency the C API doesn't have ([NVIDIA Docs][9]).
-* **Streaming advantages:** Because gRPC streams keep connection affinity, they're the recommended path where chunk order must be preserved (common in VAD or incremental ASR) ([NVIDIA Docs][2]).
-
-### Putting It Together for Audio Pipelines
-
-1. **Same-host micro-service?**
-   *Embed Triton via C API and place your PCM/Opus bytes in system/CUDA shared memory*—fastest possible (tens of µs overhead).
-
-2. **Micro-service across machines or Kubernetes pods?**
-   *Use gRPC.* Keep a persistent channel and send either:
-
-   * a single request containing the whole clip as a `BYTES` tensor, or
-   * a streaming RPC where every 10–20 ms chunk is an individual message (ideal for real-time).
-
-3. **Browser or firewalled corporate environment?**
-   *Use HTTP/REST with `application/vnd.triton.binary+json`* so your WAV/FLAC bytes stay raw; overhead is \~5-15 % higher than gRPC but universally routable ([GitHub][10]).
-
-4. **Large on-prem batch jobs?**
-   Combine gRPC with the **system shared-memory** extension so workers push pointers, not payloads—often doubling throughput on 10 Gb E links ([njordy.com][11]).
-
-### Recommendation
-
-* **Fastest overall:** **C API + shared memory** (requires embedding Triton; same host only).
-* **Fastest over the wire:** **gRPC** (binary, streaming, lower CPU).
-* **Acceptable fallback:** HTTP/REST with *binary tensor*; add keep-alive and gzip if the network is slow.
-  In all cases, register a shared-memory region or enable gRPC streaming when you control both ends—especially important when shipping high-rate audio bytes to your model.
-</details>
 
 # Guide: Hosting a Transformer Model on Triton Inference Server
 
