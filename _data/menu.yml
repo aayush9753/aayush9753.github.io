@@ -26,15 +26,19 @@ entries:
   
   - title: by category
     entries:
-    - title: llms
+    - title: llm
       post_list:
-        category: llms
+        category: llm
+        limit: 2
+    - title: speech
+      post_list:
+        category: speech
         limit: 2
 
-    - title: diy-rouductivity
-      post_list:
-        category: diy-productivity
-        limit: 2
+    # - title: diy-rouductivity
+    #   post_list:
+    #     category: diy-productivity
+    #     limit: 2
 
     - title: all categories
       url: ./category.html
