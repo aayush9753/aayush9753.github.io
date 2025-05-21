@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Swin transformers
-category: [research-papers, deep-learning]
+category: research-papers
 date: 2022-03-12
 ---
 

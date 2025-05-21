@@ -1,7 +1,7 @@
 ---
 layout: archive
 title: Prometheus and PromQL mental model
-category: [test]
+category: test
 date: 2022-04-15
 ---
 
