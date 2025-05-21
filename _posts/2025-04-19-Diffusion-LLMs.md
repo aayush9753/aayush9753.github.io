@@ -19,17 +19,17 @@ The thermodynamic analogy posits the initial data distribution as being far from
 
 The forward diffusion process is mathematically defined as a Markov chain.3 Starting with an initial data sample $x_0$ drawn from the true data distribution $q(x_0)$, the process generates a sequence of latent variables $x_1,x_2,\ldots,x_T$ by adding Gaussian noise at each discrete time step $t$, where $t$ ranges from 1 to $T$. The transition probability at each step is defined by a conditional Gaussian distribution 3:
 
-q(x_t \mid x_{t-1}) = \mathcal{N}(x_t; \sqrt{1-\beta_t}x_{t-1}, \beta_t \mathbf{I})
+$$q(x_t \mid x_{t-1}) = \mathcal{N}(x_t; \sqrt{1-\beta_t}x_{t-1}, \beta_t \mathbf{I})$$
 
 Here, $x_t$ represents the state (noisy data sample) at time step $t$, $\mathcal{N}(\cdot;\mu,\Sigma)$ denotes a Gaussian distribution with mean $\mu$ and covariance $\Sigma$, $\mathbf{I}$ is the identity matrix, and $\{\beta_t\}_{t=1}^T$ is a pre-defined variance schedule.$^3$ The values $\beta_t$ are typically small positive numbers $(0<\beta_t<1)$ that control the amount of noise added at each step. The variance schedule is a crucial design choice; common schedules include linear increases in $\beta_t$ (e.g., from $10^{-4}$ to $0.02$ $^1$) or cosine schedules.$^3$ These schedules ensure that the data is gradually corrupted. While typically fixed, the noise schedule itself can potentially be learned.$^1$ The Markov property implies that the state $x_t$ depends only on the immediately preceding state $x_{t-1}$.$^3$ The joint probability of the entire sequence of noisy samples given the initial data is the product of these transitions:
 
-q(x_{1:T} \mid x_0) = \prod_{t=1}^T q(x_t \mid x_{t-1})
+$$q(x_{1:T} \mid x_0) = \prod_{t=1}^T q(x_t \mid x_{t-1})$$
 
 $^3$
 
 A significant property of this Gaussian forward process is that we can sample $x_t$ at any arbitrary time step $t$ directly from the initial data $x_0$ in closed form, without iterating through all intermediate steps.$^3$ By defining $\alpha_t=1-\beta_t$ and $\bar{\alpha}_t=\prod_{i=1}^t \alpha_i$ $^5$, the conditional distribution $q(x_t|x_0)$ is also Gaussian:
 
-$$q(x_t|x_0) = \mathcal{N}(x_t; \sqrt{\bar{\alpha}_t}x_0, (1-\bar{\alpha}_t)\mathbf{I})$$
+$$q(x_t \mid x_0) = \mathcal{N}(x_t; \sqrt{\bar{\alpha}_t}x_0, (1-\bar{\alpha}_t)\mathbf{I})$$
 
 $^3$
 
@@ -43,19 +43,19 @@ As the number of steps $T$ becomes large, $\bar{\alpha}_T = \prod_{t=1}^T (1-\be
 
 ### 1.3 The Reverse Process (Denoising): Mathematical Formulation
 
-The generative power of diffusion models lies in learning to reverse the forward diffusion process. The goal is to learn a model $p_\theta$ that approximates the true posterior probability distribution of the reverse transitions, $q(x_{t-1}|x_t)$.$^3$ If the noise added at each forward step, $\beta_t$, is sufficiently small, the reverse transition $q(x_{t-1}|x_t)$ can also be shown to be Gaussian.$^5$ However, computing $q(x_{t-1}|x_t)$ directly is intractable because it requires marginalizing over the entire data distribution.
+The generative power of diffusion models lies in learning to reverse the forward diffusion process. The goal is to learn a model $p_\theta$ that approximates the true posterior probability distribution of the reverse transitions, $q(x_{t-1} \mid x_t)$.$^3$ If the noise added at each forward step, $\beta_t$, is sufficiently small, the reverse transition $q(x_{t-1} \mid x_t)$ can also be shown to be Gaussian.$^5$ However, computing $q(x_{t-1} \mid x_t)$ directly is intractable because it requires marginalizing over the entire data distribution.
 
 Therefore, we parameterize the reverse process using a neural network with parameters $\theta$. This network learns to approximate the reverse transitions with conditional Gaussian distributions:
 
-$$p_\theta(x_{t-1}|x_t) = \mathcal{N}(x_{t-1};\mu_\theta(x_t,t),\Sigma_\theta(x_t,t))$$
+$$p_\theta(x_{t-1} \mid x_t) = \mathcal{N}(x_{t-1};\mu_\theta(x_t,t),\Sigma_\theta(x_t,t))$$
 
 $^3$
 
 Here, $\mu_\theta(x_t,t)$ and $\Sigma_\theta(x_t,t)$ are the mean and covariance matrix of the Gaussian transition at time step $t$, predicted by the neural network given the current state $x_t$ and the time step $t$.
 
-While $q(x_{t-1}|x_t)$ is intractable, the posterior distribution conditioned on the original data, $q(x_{t-1}|x_t,x_0)$, is tractable and can be derived using Bayes' theorem.$^5$ It is also a Gaussian distribution:
+While $q(x_{t-1} \mid x_t)$ is intractable, the posterior distribution conditioned on the original data, $q(x_{t-1} \mid x_t, x_0)$, is tractable and can be derived using Bayes' theorem.$^5$ It is also a Gaussian distribution:
 
-$$q(x_{t-1}|x_t,x_0) = \mathcal{N}(x_{t-1};\tilde{\mu}_t(x_t,x_0),\tilde{\beta}_t\mathbf{I})$$
+$$q(x_{t-1} \mid x_t, x_0) = \mathcal{N}(x_{t-1};\tilde{\mu}_t(x_t,x_0),\tilde{\beta}_t\mathbf{I})$$
 
 where the mean $\tilde{\mu}_t$ and variance $\tilde{\beta}_t$ are functions of $x_t$, $x_0$, and the noise schedule parameters $\alpha_t$ and $\beta_t$:
 
@@ -67,7 +67,7 @@ $$\tilde{\beta}_t = \frac{1-\bar{\alpha}_{t-1}}{1-\bar{\alpha}_t}\beta_t$$
 
 $^{18}$
 
-The objective during training is to make the learned reverse transitions $p_\theta(x_{t-1}|x_t)$ closely match these true posterior transitions $q(x_{t-1}|x_t,x_0)$. The reverse process starts generation by sampling from a prior distribution $p(x_T)$, which is typically set to the standard Gaussian $\mathcal{N}(0,\mathbf{I})$ (matching the distribution reached by the forward process).$^5$ Then, it iteratively samples $x_{t-1}$ from $p_\theta(x_{t-1}|x_t)$ for $t=T,T-1,\ldots,1$, ultimately producing a generated sample $x_0$.$^5$
+The objective during training is to make the learned reverse transitions $p_\theta(x_{t-1} \mid x_t)$ closely match these true posterior transitions $q(x_{t-1} \mid x_t, x_0)$. The reverse process starts generation by sampling from a prior distribution $p(x_T)$, which is typically set to the standard Gaussian $\mathcal{N}(0,\mathbf{I})$ (matching the distribution reached by the forward process).$^5$ Then, it iteratively samples $x_{t-1}$ from $p_\theta(x_{t-1} \mid x_t)$ for $t=T,T-1,\ldots,1$, ultimately producing a generated sample $x_0$.$^5$
 
 ### 1.4 Underlying Principles: Connections to Other Models
 
