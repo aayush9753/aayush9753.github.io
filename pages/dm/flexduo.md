@@ -3,9 +3,6 @@ layout: page
 title: "FlexDuo - A Pluggable System for Enabling Full-Duplex Capabilities in Speech Dialogue Systems"
 permalink: /dm/flexduo/
 ---
-
-# FlexDuo: A Pluggable System for Enabling Full-Duplex Capabilities in Speech Dialogue Systems
-
 Liao, Borui, Yulong Xu, Jiao Ou, Kaiyuan Yang, Weihua Jian, Pengfei Wan, and Di Zhang. "FlexDuo: A Pluggable System for Enabling Full-Duplex Capabilities in Speech Dialogue Systems." arXiv, February 19, 2025. [https://doi.org/10.48550/arXiv.2502.13472](https://doi.org/10.48550/arXiv.2502.13472).
 
 ## Model Architecture
