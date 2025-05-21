@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Dialogue Manager
-category: [speech, ongoing]
+category: [speech]
 date: 2025-03-05
 ---
 
