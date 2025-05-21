@@ -17,59 +17,61 @@ The thermodynamic analogy posits the initial data distribution as being far from
 
 ### 1.2 The Forward Process (Diffusion): Mathematical Formulation
 
-The forward diffusion process is mathematically defined as a Markov chain.3 Starting with an initial data sample x0​ drawn from the true data distribution q(x0​), the process generates a sequence of latent variables x1​,x2​,…,xT​ by adding Gaussian noise at each discrete time step t, where t ranges from 1 to T. The transition probability at each step is defined by a conditional Gaussian distribution 3:
+The forward diffusion process is mathematically defined as a Markov chain.3 Starting with an initial data sample $x_0$ drawn from the true data distribution $q(x_0)$, the process generates a sequence of latent variables $x_1,x_2,\ldots,x_T$ by adding Gaussian noise at each discrete time step $t$, where $t$ ranges from 1 to $T$. The transition probability at each step is defined by a conditional Gaussian distribution 3:
 
-q(xt​∣xt−1​)=N(xt​;1−βt​​xt−1​,βt​I)
+q(x_t \mid x_{t-1}) = \mathcal{N}(x_t; \sqrt{1-\beta_t}x_{t-1}, \beta_t \mathbf{I})
 
-Here, xt​ represents the state (noisy data sample) at time step t, N(⋅;μ,Σ) denotes a Gaussian distribution with mean μ and covariance Σ, I is the identity matrix, and {βt​}t=1T​ is a pre-defined variance schedule.3 The values βt​ are typically small positive numbers (0<βt​<1) that control the amount of noise added at each step. The variance schedule is a crucial design choice; common schedules include linear increases in βt​ (e.g., from 10−4 to 0.02 1) or cosine schedules.3 These schedules ensure that the data is gradually corrupted. While typically fixed, the noise schedule itself can potentially be learned.1 The Markov property implies that the state xt​ depends only on the immediately preceding state xt−1​.3 The joint probability of the entire sequence of noisy samples given the initial data is the product of these transitions:
+Here, $x_t$ represents the state (noisy data sample) at time step $t$, $\mathcal{N}(\cdot;\mu,\Sigma)$ denotes a Gaussian distribution with mean $\mu$ and covariance $\Sigma$, $\mathbf{I}$ is the identity matrix, and $\{\beta_t\}_{t=1}^T$ is a pre-defined variance schedule.$^3$ The values $\beta_t$ are typically small positive numbers $(0<\beta_t<1)$ that control the amount of noise added at each step. The variance schedule is a crucial design choice; common schedules include linear increases in $\beta_t$ (e.g., from $10^{-4}$ to $0.02$ $^1$) or cosine schedules.$^3$ These schedules ensure that the data is gradually corrupted. While typically fixed, the noise schedule itself can potentially be learned.$^1$ The Markov property implies that the state $x_t$ depends only on the immediately preceding state $x_{t-1}$.$^3$ The joint probability of the entire sequence of noisy samples given the initial data is the product of these transitions:
 
-q(x1:T​∣x0​)=t=1∏T​q(xt​∣xt−1​) 3
+q(x_{1:T} \mid x_0) = \prod_{t=1}^T q(x_t \mid x_{t-1}) ^3
 
-A significant property of this Gaussian forward process is that we can sample xt​ at any arbitrary time step t directly from the initial data x0​ in closed form, without iterating through all intermediate steps.3 By defining αt​=1−βt​ and αˉt​=∏i=1t​αi​ 5, the conditional distribution q(xt​∣x0​) is also Gaussian:
+A significant property of this Gaussian forward process is that we can sample $x_t$ at any arbitrary time step $t$ directly from the initial data $x_0$ in closed form, without iterating through all intermediate steps.$^3$ By defining $\alpha_t=1-\beta_t$ and $\bar{\alpha}_t=\prod_{i=1}^t \alpha_i$ $^5$, the conditional distribution $q(x_t|x_0)$ is also Gaussian:
 
-q(xt​∣x0​)=N(xt​;αˉt​​x0​,(1−αˉt​)I) 3
+$$q(x_t|x_0) = \mathcal{N}(x_t; \sqrt{\bar{\alpha}_t}x_0, (1-\bar{\alpha}_t)\mathbf{I}) ^3$$
 
-This allows for efficient training, as we can directly compute a noisy version xt​ for any t using the reparameterization trick: sample a standard Gaussian noise vector ϵ∼N(0,I) and compute:
+This allows for efficient training, as we can directly compute a noisy version $x_t$ for any $t$ using the reparameterization trick: sample a standard Gaussian noise vector $\epsilon \sim \mathcal{N}(0,\mathbf{I})$ and compute:
 
-xt​=αˉt​​x0​+1−αˉt​​ϵ 3
+$$x_t = \sqrt{\bar{\alpha}_t}x_0 + \sqrt{1-\bar{\alpha}_t}\epsilon ^3$$
 
-As the number of steps T becomes large, αˉT​=∏t=1T​(1−βt​) approaches zero. Consequently, the distribution of xT​ converges to an isotropic Gaussian distribution N(0,I), effectively erasing all information about the original data x0​.5
+As the number of steps $T$ becomes large, $\bar{\alpha}_T = \prod_{t=1}^T (1-\beta_t)$ approaches zero. Consequently, the distribution of $x_T$ converges to an isotropic Gaussian distribution $\mathcal{N}(0,\mathbf{I})$, effectively erasing all information about the original data $x_0$.$^5$
 
 ### 1.3 The Reverse Process (Denoising): Mathematical Formulation
 
-The generative power of diffusion models lies in learning to reverse the forward diffusion process. The goal is to learn a model pθ​ that approximates the true posterior probability distribution of the reverse transitions, q(xt−1​∣xt​).3 If the noise added at each forward step, βt​, is sufficiently small, the reverse transition q(xt−1​∣xt​) can also be shown to be Gaussian.5 However, computing q(xt−1​∣xt​) directly is intractable because it requires marginalizing over the entire data distribution.
+The generative power of diffusion models lies in learning to reverse the forward diffusion process. The goal is to learn a model $p_\theta$ that approximates the true posterior probability distribution of the reverse transitions, $q(x_{t-1}|x_t)$.$^3$ If the noise added at each forward step, $\beta_t$, is sufficiently small, the reverse transition $q(x_{t-1}|x_t)$ can also be shown to be Gaussian.$^5$ However, computing $q(x_{t-1}|x_t)$ directly is intractable because it requires marginalizing over the entire data distribution.
 
-Therefore, we parameterize the reverse process using a neural network with parameters θ. This network learns to approximate the reverse transitions with conditional Gaussian distributions:
+Therefore, we parameterize the reverse process using a neural network with parameters $\theta$. This network learns to approximate the reverse transitions with conditional Gaussian distributions:
 
-pθ​(xt−1​∣xt​)=N(xt−1​;μθ​(xt​,t),Σθ​(xt​,t)) 3
+$$p_\theta(x_{t-1}|x_t) = \mathcal{N}(x_{t-1};\mu_\theta(x_t,t),\Sigma_\theta(x_t,t)) ^3$$
 
-Here, μθ​(xt​,t) and Σθ​(xt​,t) are the mean and covariance matrix of the Gaussian transition at time step t, predicted by the neural network given the current state xt​ and the time step t.
+Here, $\mu_\theta(x_t,t)$ and $\Sigma_\theta(x_t,t)$ are the mean and covariance matrix of the Gaussian transition at time step $t$, predicted by the neural network given the current state $x_t$ and the time step $t$.
 
-While q(xt−1​∣xt​) is intractable, the posterior distribution conditioned on the original data, q(xt−1​∣xt​,x0​), is tractable and can be derived using Bayes' theorem.5 It is also a Gaussian distribution:
+While $q(x_{t-1}|x_t)$ is intractable, the posterior distribution conditioned on the original data, $q(x_{t-1}|x_t,x_0)$, is tractable and can be derived using Bayes' theorem.$^5$ It is also a Gaussian distribution:
 
-q(xt−1​∣xt​,x0​)=N(xt−1​;μ~​t​(xt​,x0​),β~​t​I)
+$$q(x_{t-1}|x_t,x_0) = \mathcal{N}(x_{t-1};\tilde{\mu}_t(x_t,x_0),\tilde{\beta}_t\mathbf{I})$$
 
-where the mean μ~​t​ and variance β~​t​ are functions of xt​, x0​, and the noise schedule parameters αt​ and βt​:
+where the mean $\tilde{\mu}_t$ and variance $\tilde{\beta}_t$ are functions of $x_t$, $x_0$, and the noise schedule parameters $\alpha_t$ and $\beta_t$:
 
-μ~​t​(xt​,x0​)=1−αˉt​αˉt−1​​βt​​x0​+1−αˉt​αt​​(1−αˉt−1​)​xt​18β~​t​=1−αˉt​1−αˉt−1​​βt​ 18
+$$\tilde{\mu}_t(x_t,x_0) = \frac{\sqrt{\alpha_t}(1-\bar{\alpha}_{t-1})}{1-\bar{\alpha}_t}x_t + \frac{\sqrt{\bar{\alpha}_{t-1}}\beta_t}{1-\bar{\alpha}_t}x_0 ^{18}$$
 
-The objective during training is to make the learned reverse transitions pθ​(xt−1​∣xt​) closely match these true posterior transitions q(xt−1​∣xt​,x0​). The reverse process starts generation by sampling from a prior distribution p(xT​), which is typically set to the standard Gaussian N(0,I) (matching the distribution reached by the forward process).5 Then, it iteratively samples xt−1​ from pθ​(xt−1​∣xt​) for t=T,T−1,…,1, ultimately producing a generated sample x0​.5
+$$\tilde{\beta}_t = \frac{1-\bar{\alpha}_{t-1}}{1-\bar{\alpha}_t}\beta_t ^{18}$$
+
+The objective during training is to make the learned reverse transitions $p_\theta(x_{t-1}|x_t)$ closely match these true posterior transitions $q(x_{t-1}|x_t,x_0)$. The reverse process starts generation by sampling from a prior distribution $p(x_T)$, which is typically set to the standard Gaussian $\mathcal{N}(0,\mathbf{I})$ (matching the distribution reached by the forward process).$^5$ Then, it iteratively samples $x_{t-1}$ from $p_\theta(x_{t-1}|x_t)$ for $t=T,T-1,\ldots,1$, ultimately producing a generated sample $x_0$.$^5$
 
 ### 1.4 Underlying Principles: Connections to Other Models
 
 The theoretical underpinnings of diffusion models reveal a remarkable convergence of concepts drawn from diverse fields such as non-equilibrium thermodynamics, score matching, variational inference, and Markov decision processes.3 This confluence suggests a potentially deep and unifying mathematical framework for generative modeling.
 
-Thermodynamics: As mentioned, the core intuition draws from non-equilibrium thermodynamics.5 The forward process mirrors the diffusion of particles from a complex, low-entropy state (data distribution) towards a high-entropy, simple equilibrium state (Gaussian noise). The learned reverse process effectively reverses entropy, guiding samples back to the structured data manifold.8
+**Thermodynamics**: As mentioned, the core intuition draws from non-equilibrium thermodynamics.$^5$ The forward process mirrors the diffusion of particles from a complex, low-entropy state (data distribution) towards a high-entropy, simple equilibrium state (Gaussian noise). The learned reverse process effectively reverses entropy, guiding samples back to the structured data manifold.$^8$
 
-Score Matching: There is a deep connection between the denoising objective in diffusion models and score matching.10 The score of a distribution p(x) is defined as the gradient of its log-probability with respect to the data, ∇x​logp(x). It can be shown that training the neural network ϵθ​(xt​,t) to predict the noise ϵ added at step t is equivalent to learning the score function of the noisy data distribution p(xt​).14 Specifically, using Tweedie's formula, the optimal denoiser relates the noisy sample xt​ to the score: E[x0​∣xt​]∝xt​+(1−αˉt​)∇xt​​logp(xt​).18 This connection links diffusion models to score-based generative models trained using techniques like denoising score matching and simulated using methods like Langevin dynamics.8
+**Score Matching**: There is a deep connection between the denoising objective in diffusion models and score matching.$^{10}$ The score of a distribution $p(x)$ is defined as the gradient of its log-probability with respect to the data, $\nabla_x \log p(x)$. It can be shown that training the neural network $\epsilon_\theta(x_t,t)$ to predict the noise $\epsilon$ added at step $t$ is equivalent to learning the score function of the noisy data distribution $p(x_t)$.$^{14}$ Specifically, using Tweedie's formula, the optimal denoiser relates the noisy sample $x_t$ to the score: $E[x_0|x_t] \propto x_t + (1-\bar{\alpha}_t)\nabla_{x_t}\log p(x_t)$.$^{18}$ This connection links diffusion models to score-based generative models trained using techniques like denoising score matching and simulated using methods like Langevin dynamics.$^8$
 
-Variational Autoencoders (VAEs): Diffusion models can be interpreted as a specific type of deep, hierarchical VAE.1 The sequence x1​,…,xT​ acts as latent variables. However, there are key distinctions: (1) The "encoder" (forward process q) is fixed and non-learned. (2) The latent variables xt​ have the same dimensionality as the original data x0​. (3) A single "decoder" network (the denoising network pθ​) is typically shared across all time steps t, conditioned on t. (4) The training objective, while derived from the Evidence Lower Bound (ELBO) common in VAEs, often uses specific reweighting or simplifications.1 This fixed forward process significantly simplifies the optimization landscape compared to standard VAEs where both encoder and decoder are learned simultaneously.1 The focus shifts entirely to learning the reverse denoising function, potentially contributing to the training stability and high sample quality observed in diffusion models.10
+**Variational Autoencoders (VAEs)**: Diffusion models can be interpreted as a specific type of deep, hierarchical VAE.$^1$ The sequence $x_1,\ldots,x_T$ acts as latent variables. However, there are key distinctions: (1) The "encoder" (forward process $q$) is fixed and non-learned. (2) The latent variables $x_t$ have the same dimensionality as the original data $x_0$. (3) A single "decoder" network (the denoising network $p_\theta$) is typically shared across all time steps $t$, conditioned on $t$. (4) The training objective, while derived from the Evidence Lower Bound (ELBO) common in VAEs, often uses specific reweighting or simplifications.$^1$ This fixed forward process significantly simplifies the optimization landscape compared to standard VAEs where both encoder and decoder are learned simultaneously.$^1$ The focus shifts entirely to learning the reverse denoising function, potentially contributing to the training stability and high sample quality observed in diffusion models.$^{10}$
 
-Energy-Based Models (EBMs): Connections also exist with EBMs. Frameworks like Diffusion by Maximum Entropy IRL (DxMI) formulate a minimax problem where an EBM provides log density estimates as reward signals to guide the diffusion model's training.20 The EBM learns an energy function whose negative value approximates the log probability density.
+**Energy-Based Models (EBMs)**: Connections also exist with EBMs. Frameworks like Diffusion by Maximum Entropy IRL (DxMI) formulate a minimax problem where an EBM provides log density estimates as reward signals to guide the diffusion model's training.$^{20}$ The EBM learns an energy function whose negative value approximates the log probability density.
 
-Reinforcement Learning (RL): The sequential generation process of diffusion models can be framed as a Markov Decision Process (MDP), where the state is (xt​,t) and the action is selecting the next state xt−1​.20 This perspective allows the application of RL techniques. For instance, Inverse Reinforcement Learning (IRL) can be used to infer a reward function from the diffusion trajectory, enabling the discovery of faster sampling paths.20 RLHF (Reinforcement Learning from Human Feedback) and related techniques like DPO (Direct Preference Optimization) are also being applied to fine-tune diffusion models based on human preferences or other reward signals, particularly for aligning model outputs (e.g., in text-to-image generation).21
+**Reinforcement Learning (RL)**: The sequential generation process of diffusion models can be framed as a Markov Decision Process (MDP), where the state is $(x_t,t)$ and the action is selecting the next state $x_{t-1}$.$^{20}$ This perspective allows the application of RL techniques. For instance, Inverse Reinforcement Learning (IRL) can be used to infer a reward function from the diffusion trajectory, enabling the discovery of faster sampling paths.$^{20}$ RLHF (Reinforcement Learning from Human Feedback) and related techniques like DPO (Direct Preference Optimization) are also being applied to fine-tune diffusion models based on human preferences or other reward signals, particularly for aligning model outputs (e.g., in text-to-image generation).$^{21}$
 
-The ability to frame diffusion models using concepts from these diverse fields indicates that they tap into fundamental principles of probability, optimization, and dynamics. This interrelation implies that techniques and theoretical understanding from one field might be transferable to improve diffusion models, such as using RL for faster sampling or EBMs for guidance.20
+The ability to frame diffusion models using concepts from these diverse fields indicates that they tap into fundamental principles of probability, optimization, and dynamics. This interrelation implies that techniques and theoretical understanding from one field might be transferable to improve diffusion models, such as using RL for faster sampling or EBMs for guidance.$^{20}$
 
 ## Section 2: Architecture and Training of Diffusion Models
 
@@ -99,43 +101,43 @@ The goal of training a diffusion model is to adjust the parameters θ of the den
 
 The VLB for diffusion models can be decomposed into a sum of terms, each corresponding to a step in the diffusion process 5:
 
-LVLB​=Eq​
+$$L_\text{VLB} = \mathbb{E}_{q} \Big[ -\log p_\theta(x_0|x_1) + \sum_{t=2}^{T} D_\text{KL}(q(x_{t-1}|x_t,x_0) \| p_\theta(x_{t-1}|x_t)) + D_\text{KL}(q(x_T|x_0) \| p(x_T)) \Big]$$
 
 where:
 
-Lt−1​=DKL​(q(xt−1​∣xt​,x0​)∥pθ​(xt−1​∣xt​)) for t=2,…,T. This term measures the Kullback-Leibler (KL) divergence between the learned reverse transition pθ​ and the true posterior q at each step. Minimizing this KL divergence forces the learned transition to match the true one.
+$L_{t-1} = D_\text{KL}(q(x_{t-1}|x_t,x_0) \| p_\theta(x_{t-1}|x_t))$ for $t=2,\ldots,T$. This term measures the Kullback-Leibler (KL) divergence between the learned reverse transition $p_\theta$ and the true posterior $q$ at each step. Minimizing this KL divergence forces the learned transition to match the true one.
 
-LT​=DKL​(q(xT​∣x0​)∥pθ​(xT​)) measures the mismatch between the final noisy state distribution under the forward process and the prior assumed by the reverse process (usually N(0,I)).
+$L_T = D_\text{KL}(q(x_T|x_0) \| p_\theta(x_T))$ measures the mismatch between the final noisy state distribution under the forward process and the prior assumed by the reverse process (usually $\mathcal{N}(0,\mathbf{I})$).
 
-L0​=−logpθ​(x0​∣x1​) represents the reconstruction likelihood of the original data given the state at t=1.
+$L_0 = -\log p_\theta(x_0|x_1)$ represents the reconstruction likelihood of the original data given the state at $t=1$.
 
-To optimize this objective, the learned mean μθ​(xt​,t) must be trained to predict the true posterior mean μ~​t​(xt​,x0​). A common and effective parameterization, proposed by Ho et al. (DDPM) 10, involves training the neural network, denoted ϵθ​(xt​,t), to predict the noise component ϵ that was added to x0​ to obtain xt​ via the relation xt​=αˉt​​x0​+1−αˉt​​ϵ.3 The learned mean μθ​ can then be expressed in terms of the predicted noise ϵθ​:
+To optimize this objective, the learned mean $\mu_\theta(x_t,t)$ must be trained to predict the true posterior mean $\tilde{\mu}_t(x_t,x_0)$. A common and effective parameterization, proposed by Ho et al. (DDPM) $^{10}$, involves training the neural network, denoted $\epsilon_\theta(x_t,t)$, to predict the noise component $\epsilon$ that was added to $x_0$ to obtain $x_t$ via the relation $x_t = \sqrt{\bar{\alpha}_t}x_0 + \sqrt{1-\bar{\alpha}_t}\epsilon$.$^3$ The learned mean $\mu_\theta$ can then be expressed in terms of the predicted noise $\epsilon_\theta$:
 
-μθ​(xt​,t)=αt​​1​(xt​−1−αˉt​​βt​​ϵθ​(xt​,t)) 3 (Note: βt​=1−αt​)
+$$\mu_\theta(x_t,t) = \frac{1}{\sqrt{\alpha_t}}\left(x_t - \frac{\beta_t}{\sqrt{1-\bar{\alpha}_t}}\epsilon_\theta(x_t,t)\right) ^3$$ (Note: $\beta_t = 1-\alpha_t$)
 
-The variance Σθ​(xt​,t) is often kept fixed rather than learned, typically set to σt2​I where σt2​ is either βt​ or the true posterior variance β~​t​.5 Fixing the variance simplifies the model and training. However, learning the variance is also possible and can sometimes improve likelihoods.1
+The variance $\Sigma_\theta(x_t,t)$ is often kept fixed rather than learned, typically set to $\sigma_t^2\mathbf{I}$ where $\sigma_t^2$ is either $\beta_t$ or the true posterior variance $\tilde{\beta}_t$.$^5$ Fixing the variance simplifies the model and training. However, learning the variance is also possible and can sometimes improve likelihoods.$^1$
 
-Substituting the noise prediction parameterization into the KL divergence term Lt−1​ leads to a loss term involving the squared error between the true noise ϵ and the predicted noise ϵθ​, weighted by terms depending on the noise schedule.5 However, Ho et al. 10 empirically found that a simplified objective function, which essentially ignores the complex weighting factors from the VLB and directly minimizes the Mean Squared Error (MSE) between the true and predicted noise, performs very well, often yielding better sample quality.3 This simplified loss is widely used:
+Substituting the noise prediction parameterization into the KL divergence term $L_{t-1}$ leads to a loss term involving the squared error between the true noise $\epsilon$ and the predicted noise $\epsilon_\theta$, weighted by terms depending on the noise schedule.$^5$ However, Ho et al. $^{10}$ empirically found that a simplified objective function, which essentially ignores the complex weighting factors from the VLB and directly minimizes the Mean Squared Error (MSE) between the true and predicted noise, performs very well, often yielding better sample quality.$^3$ This simplified loss is widely used:
 
-$$L_\text{simple} = \mathbb{E}_{t \sim \mathcal{U}(1, T), \mathbf{x}_0 \sim q(\mathbf{x}_0), \boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})} \Big$$ 3
+$$L_\text{simple} = \mathbb{E}_{t \sim \mathcal{U}(1, T), \mathbf{x}_0 \sim q(\mathbf{x}_0), \boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})} \Big[\|\boldsymbol{\epsilon} - \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t)\|^2 \Big] ^3$$
 
-The training algorithm typically proceeds as follows (e.g., Algorithm 1 in DDPM 3):
+The training algorithm typically proceeds as follows (e.g., Algorithm 1 in DDPM $^3$):
 
 Repeat until convergence:
 
-Sample a batch of data points x0​ from the training dataset.
+1. Sample a batch of data points $x_0$ from the training dataset.
 
-For each data point, sample a time step t uniformly from {1,…,T}.
+2. For each data point, sample a time step $t$ uniformly from $\{1,\ldots,T\}$.
 
-Sample a noise vector ϵ from N(0,I).
+3. Sample a noise vector $\epsilon$ from $\mathcal{N}(0,\mathbf{I})$.
 
-Compute the noisy sample xt​=αˉt​​x0​+1−αˉt​​ϵ.
+4. Compute the noisy sample $x_t = \sqrt{\bar{\alpha}_t}x_0 + \sqrt{1-\bar{\alpha}_t}\epsilon$.
 
-Feed xt​ and t into the neural network to predict the noise ϵθ​(xt​,t).
+5. Feed $x_t$ and $t$ into the neural network to predict the noise $\epsilon_\theta(x_t,t)$.
 
-Calculate the loss Lsimple​ (or a variant) based on ∥ϵ−ϵθ​∥2.
+6. Calculate the loss $L_{\text{simple}}$ (or a variant) based on $\|\epsilon - \epsilon_\theta\|^2$.
 
-Compute gradients and update the network parameters θ using an optimizer (e.g., Adam). 3
+7. Compute gradients and update the network parameters $\theta$ using an optimizer (e.g., Adam). $^3$
 
 This simplified objective highlights a pragmatic aspect often seen in deep learning: while the VLB provides theoretical justification, the core task the network needs to master – predicting the noise (or equivalently, the denoised signal) – can be effectively optimized using a simpler, more direct objective.11 Empirical performance and training stability often guide the choice of the final loss function.11 It is possible to add auxiliary loss terms (e.g., for regularization or enforcing specific properties) 28, but care must be taken as this might complicate training or deviate significantly from the underlying probabilistic model.28 Training can sometimes exhibit oscillatory loss behavior, particularly as the network quickly learns the easier task of denoising at high noise levels (t≫1) while struggling with low noise levels (t≈1).31
 
@@ -143,13 +145,20 @@ This simplified objective highlights a pragmatic aspect often seen in deep learn
 
 Once the denoising network pθ​ (parameterized as ϵθ​) is trained, it can be used to generate new data samples. The sampling process starts from pure noise and iteratively applies the learned reverse transitions to gradually denoise it into a sample from the target data distribution.3
 
-The generation algorithm (e.g., Algorithm 2 in DDPM 3) proceeds as follows:
+The generation algorithm (e.g., Algorithm 2 in DDPM $^3$) proceeds as follows:
 
-Initialization: Start by sampling an initial noise vector xT​ from the prior distribution, typically xT​∼N(0,I).
+1. **Initialization**: Start by sampling an initial noise vector $x_T$ from the prior distribution, typically $x_T \sim \mathcal{N}(0,\mathbf{I})$.
 
-Iterative Denoising Loop: Iterate backwards through time steps from t=T down to t=1: a. Sample a random Gaussian noise vector z∼N(0,I) (if t>1; set z=0 if t=1). b. Use the trained neural network to predict the noise component ϵθ​(xt​,t) based on the current state xt​ and time step t. c. Calculate the mean of the reverse transition pθ​(xt−1​∣xt​) using the predicted noise: μθ​(xt​,t)=αt​​1​(xt​−1−αˉt​​βt​​ϵθ​(xt​,t)) 3 d. Determine the variance σt2​ for the reverse step. Common choices are σt2​=βt​ or σt2​=β~​t​=1−αˉt​1−αˉt−1​​βt​.5 e. Sample the state at the previous time step xt−1​ from the Gaussian distribution: xt−1​=μθ​(xt​,t)+σt​z 3
+2. **Iterative Denoising Loop**: Iterate backwards through time steps from $t=T$ down to $t=1$:
+   a. Sample a random Gaussian noise vector $z \sim \mathcal{N}(0,\mathbf{I})$ (if $t>1$; set $z=0$ if $t=1$).
+   b. Use the trained neural network to predict the noise component $\epsilon_\theta(x_t,t)$ based on the current state $x_t$ and time step $t$.
+   c. Calculate the mean of the reverse transition $p_\theta(x_{t-1}|x_t)$ using the predicted noise: 
+      $$\mu_\theta(x_t,t) = \frac{1}{\sqrt{\alpha_t}}\left(x_t - \frac{\beta_t}{\sqrt{1-\bar{\alpha}_t}}\epsilon_\theta(x_t,t)\right) ^3$$
+   d. Determine the variance $\sigma_t^2$ for the reverse step. Common choices are $\sigma_t^2 = \beta_t$ or $\sigma_t^2 = \tilde{\beta}_t = \frac{1-\bar{\alpha}_t}{1-\bar{\alpha}_{t-1}}\beta_t$.$^5$
+   e. Sample the state at the previous time step $x_{t-1}$ from the Gaussian distribution: 
+      $$x_{t-1} = \mu_\theta(x_t,t) + \sigma_t z ^3$$
 
-Output: After iterating through all time steps, the final state x0​ is the generated sample from the model. 5
+3. **Output**: After iterating through all time steps, the final state $x_0$ is the generated sample from the model. $^5$
 
 A crucial characteristic of this sampling process is its iterative nature. It typically requires evaluating the neural network once for each time step t from T down to 1. Since T is often large (e.g., 1000 or even more 1), this sequential evaluation leads to slow sampling speeds compared to models that generate samples in a single forward pass, like standard GANs or VAEs.1 This high computational cost during inference is a primary drawback of diffusion models and represents a major bottleneck for their practical application, especially in latency-sensitive scenarios. Consequently, significant research effort has been dedicated to developing techniques for accelerating the sampling process. These include designing more efficient deterministic samplers based on Ordinary Differential Equation (ODE) formulations (like DDIM - Denoising Diffusion Implicit Models) 19, using advanced SDE solvers 19, learning optimized or shorter sampling schedules 1, knowledge distillation to train faster "student" models 4, and exploring non-Markovian sampling approaches.38 The goal is to reduce the number of required network evaluations (sampling steps) significantly without substantially degrading the quality of the generated samples.
 
@@ -401,21 +410,21 @@ The comparison highlights a clear trade-off landscape. Diffusion LLMs present co
 
 The following table summarizes the key differences and trade-offs between Diffusion LLMs and Transformer-based AR LLMs:
 
-Feature | Diffusion LLMs | Transformer (AR) LLMs
---- | --- | ---
-Generation Paradigm | Iterative Refinement, Non-Autoregressive (NAR) | Sequential Prediction, Autoregressive (AR)
-Core Task Learned | Denoising / Reconstruction | Next-Token Prediction
-Training Stability | Generally Stable | Stable
-Sampling Speed/Latency | Slow (Multi-step, Teff​ dependent) | Fast (Seq. Length Dependent, KV-caching)
-Parallelism (Inference) | Parallel within each step | Sequential token generation
-Controllability | Potentially High (Iterative Guidance) | Indirect (Prompting, Fine-tuning)
-Generation Quality | Improving, often lower fluency/coherence currently | State-of-the-Art Fluency/Coherence
-Diversity | Potentially High | Moderate (Risk of Repetition)
-Handling Discrete Data | Inherent Challenge (Embedding/Rounding or Discrete Noise) | Native (Operates directly on tokens)
-Scalability | Under Investigation, Promising | Proven at Massive Scale
-Likelihood Calculation | Often Intractable or Requires Approximation | Straightforward (Perplexity)
-Key Strengths | Control, Diversity, NAR Flexibility, Error Correction Potential | Quality, Scalability, Training/Inference Efficiency
-Key Weaknesses | Sampling Speed, Current Quality Gap, Discrete Data Handling | Direct Control, Repetition, Exposure Bias, Hallucination
+| Feature | Diffusion LLMs | Transformer (AR) LLMs |
+| --- | --- | --- |
+| Generation Paradigm | Iterative Refinement, Non-Autoregressive (NAR) | Sequential Prediction, Autoregressive (AR) |
+| Core Task Learned | Denoising / Reconstruction | Next-Token Prediction |
+| Training Stability | Generally Stable | Stable |
+| Sampling Speed/Latency | Slow (Multi-step, $T_{eff}$ dependent) | Fast (Seq. Length Dependent, KV-caching) |
+| Parallelism (Inference) | Parallel within each step | Sequential token generation |
+| Controllability | Potentially High (Iterative Guidance) | Indirect (Prompting, Fine-tuning) |
+| Generation Quality | Improving, often lower fluency/coherence currently | State-of-the-Art Fluency/Coherence |
+| Diversity | Potentially High | Moderate (Risk of Repetition) |
+| Handling Discrete Data | Inherent Challenge (Embedding/Rounding or Discrete Noise) | Native (Operates directly on tokens) |
+| Scalability | Under Investigation, Promising | Proven at Massive Scale |
+| Likelihood Calculation | Often Intractable or Requires Approximation | Straightforward (Perplexity) |
+| Key Strengths | Control, Diversity, NAR Flexibility, Error Correction Potential | Quality, Scalability, Training/Inference Efficiency |
+| Key Weaknesses | Sampling Speed, Current Quality Gap, Discrete Data Handling | Direct Control, Repetition, Exposure Bias, Hallucination |
 
 ## Section 6: Conclusion and Future Directions
 
