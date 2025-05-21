@@ -183,34 +183,11 @@ def export_model():
     torch.jit.save(traced_model, "model.pt")
 ```
 
-Alternatively, you can use ONNX:
+Alternatively, you can use ONNX to export a HF Model:
 
-```python
-import torch
-from transformers import AutoModelForCausalLM
-
-def export_to_onnx():
-    # Load model
-    model_path = "your_model_path"
-    model = AutoModelForCausalLM.from_pretrained(model_path)
-    model.eval()
-    
-    # Example input for tracing
-    dummy_input = torch.zeros(1, 256, dtype=torch.int64)
-    
-    # Export to ONNX
-    torch.onnx.export(
-        model,                     # Model being exported
-        dummy_input,               # Model input
-        "model.onnx",              # Output file
-        opset_version=13,          # ONNX opset version
-        input_names=["input_ids"], # Input names
-        output_names=["logits"],   # Output names
-        dynamic_axes={
-            "input_ids": {0: "batch_size", 1: "sequence_length"},
-            "logits": {0: "batch_size", 1: "sequence_length"}
-        }
-    )
+```bash
+pip install optimum[exporters]
+optimum-cli export onnx --model chintan-nurix/110525_baseline_training1_RANDOM_BATCHES_EQUAL_TASKS_98k onnx_model/
 ```
 
 ## Custom Processing Implementation
