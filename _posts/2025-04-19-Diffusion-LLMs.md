@@ -9,15 +9,15 @@ date: 2025-04-19
 
 ### 1.1 Core Concept: Iterative Noising and Denoising
 
-Diffusion probabilistic models, commonly referred to as diffusion models, represent a powerful class of generative models that have demonstrated state-of-the-art performance in various domains, particularly in generating high-fidelity images and audio.1 The core idea, inspired by principles from non-equilibrium thermodynamics 5, is to systematically destroy structure in data through an iterative forward diffusion process and then learn a reverse process that restores the structure, effectively generating data samples from noise.1
+Diffusion probabilistic models, commonly referred to as diffusion models, represent a powerful class of generative models that have demonstrated state-of-the-art performance in various domains, particularly in generating high-fidelity images and audio.$^1$ The core idea, inspired by principles from non-equilibrium thermodynamics $^5$, is to systematically destroy structure in data through an iterative forward diffusion process and then learn a reverse process that restores the structure, effectively generating data samples from noise.$^1$
 
-This generative paradigm contrasts significantly with other established methods like Generative Adversarial Networks (GANs) or standard Variational Autoencoders (VAEs).1 While GANs involve a complex adversarial training dynamic and VAEs rely on often simple surrogate posterior distributions, diffusion models employ a conceptually straightforward two-phase mechanism. The first phase, the forward process (also called the diffusion or noising process), is typically fixed and involves gradually adding noise (usually Gaussian) to an input data sample over a sequence of time steps, progressively corrupting the data until it resembles pure noise.1 The second phase, the reverse process (also known as the denoising or generative process), is learned. It aims to reverse the noising steps, starting from a sample of pure noise and iteratively refining it to produce a sample that resembles the original data distribution.1 This iterative refinement allows the model to potentially correct errors made in earlier steps and gradually build complex data structures.3
+This generative paradigm contrasts significantly with other established methods like Generative Adversarial Networks (GANs) or standard Variational Autoencoders (VAEs).$^1$ While GANs involve a complex adversarial training dynamic and VAEs rely on often simple surrogate posterior distributions, diffusion models employ a conceptually straightforward two-phase mechanism. The first phase, the forward process (also called the diffusion or noising process), is typically fixed and involves gradually adding noise (usually Gaussian) to an input data sample over a sequence of time steps, progressively corrupting the data until it resembles pure noise.$^1$ The second phase, the reverse process (also known as the denoising or generative process), is learned. It aims to reverse the noising steps, starting from a sample of pure noise and iteratively refining it to produce a sample that resembles the original data distribution.$^1$ This iterative refinement allows the model to potentially correct errors made in earlier steps and gradually build complex data structures.$^3$
 
-The thermodynamic analogy posits the initial data distribution as being far from equilibrium. The forward process models the diffusion towards a simple equilibrium distribution (e.g., Gaussian noise). The learned reverse process then simulates the reversal of this diffusion, guiding samples from the simple equilibrium state back towards the complex, structured data manifold.8
+The thermodynamic analogy posits the initial data distribution as being far from equilibrium. The forward process models the diffusion towards a simple equilibrium distribution (e.g., Gaussian noise). The learned reverse process then simulates the reversal of this diffusion, guiding samples from the simple equilibrium state back towards the complex, structured data manifold.$^8$
 
 ### 1.2 The Forward Process (Diffusion): Mathematical Formulation
 
-The forward diffusion process is mathematically defined as a Markov chain.3 Starting with an initial data sample $x_0$ drawn from the true data distribution $q(x_0)$, the process generates a sequence of latent variables $x_1,x_2,\ldots,x_T$ by adding Gaussian noise at each discrete time step $t$, where $t$ ranges from 1 to $T$. The transition probability at each step is defined by a conditional Gaussian distribution 3:
+The forward diffusion process is mathematically defined as a Markov chain.$^3$ Starting with an initial data sample $x_0$ drawn from the true data distribution $q(x_0)$, the process generates a sequence of latent variables $x_1,x_2,\ldots,x_T$ by adding Gaussian noise at each discrete time step $t$, where $t$ ranges from 1 to $T$. The transition probability at each step is defined by a conditional Gaussian distribution $^3$:
 
 $$q(x_t \mid x_{t-1}) = \mathcal{N}(x_t; \sqrt{1-\beta_t}x_{t-1}, \beta_t \mathbf{I})$$
 
@@ -27,7 +27,7 @@ $$q(x_{1:T} \mid x_0) = \prod_{t=1}^T q(x_t \mid x_{t-1})$$
 
 $^3$
 
-A significant property of this Gaussian forward process is that we can sample $x_t$ at any arbitrary time step $t$ directly from the initial data $x_0$ in closed form, without iterating through all intermediate steps.$^3$ By defining $\alpha_t=1-\beta_t$ and $\bar{\alpha}_t=\prod_{i=1}^t \alpha_i$ $^5$, the conditional distribution $q(x_t|x_0)$ is also Gaussian:
+A significant property of this Gaussian forward process is that we can sample $x_t$ at any arbitrary time step $t$ directly from the initial data $x_0$ in closed form, without iterating through all intermediate steps.$^3$ By defining $\alpha_t=1-\beta_t$ and $\bar{\alpha}_t=\prod_{i=1}^t \alpha_i$ $^5$, the conditional distribution $q(x_t \mid x_0)$ is also Gaussian:
 
 $$q(x_t \mid x_0) = \mathcal{N}(x_t; \sqrt{\bar{\alpha}_t}x_0, (1-\bar{\alpha}_t)\mathbf{I})$$
 
@@ -71,11 +71,11 @@ The objective during training is to make the learned reverse transitions $p_\the
 
 ### 1.4 Underlying Principles: Connections to Other Models
 
-The theoretical underpinnings of diffusion models reveal a remarkable convergence of concepts drawn from diverse fields such as non-equilibrium thermodynamics, score matching, variational inference, and Markov decision processes.3 This confluence suggests a potentially deep and unifying mathematical framework for generative modeling.
+The theoretical underpinnings of diffusion models reveal a remarkable convergence of concepts drawn from diverse fields such as non-equilibrium thermodynamics, score matching, variational inference, and Markov decision processes.$^3$ This confluence suggests a potentially deep and unifying mathematical framework for generative modeling.
 
 **Thermodynamics**: As mentioned, the core intuition draws from non-equilibrium thermodynamics.$^5$ The forward process mirrors the diffusion of particles from a complex, low-entropy state (data distribution) towards a high-entropy, simple equilibrium state (Gaussian noise). The learned reverse process effectively reverses entropy, guiding samples back to the structured data manifold.$^8$
 
-**Score Matching**: There is a deep connection between the denoising objective in diffusion models and score matching.$^{10}$ The score of a distribution $p(x)$ is defined as the gradient of its log-probability with respect to the data, $\nabla_x \log p(x)$. It can be shown that training the neural network $\epsilon_\theta(x_t,t)$ to predict the noise $\epsilon$ added at step $t$ is equivalent to learning the score function of the noisy data distribution $p(x_t)$.$^{14}$ Specifically, using Tweedie's formula, the optimal denoiser relates the noisy sample $x_t$ to the score: $E[x_0|x_t] \propto x_t + (1-\bar{\alpha}_t)\nabla_{x_t}\log p(x_t)$.$^{18}$ This connection links diffusion models to score-based generative models trained using techniques like denoising score matching and simulated using methods like Langevin dynamics.$^8$
+**Score Matching**: There is a deep connection between the denoising objective in diffusion models and score matching.$^{10}$ The score of a distribution $p(x)$ is defined as the gradient of its log-probability with respect to the data, $\nabla_x \log p(x)$. It can be shown that training the neural network $\epsilon_\theta(x_t,t)$ to predict the noise $\epsilon$ added at step $t$ is equivalent to learning the score function of the noisy data distribution $p(x_t)$.$^{14}$ Specifically, using Tweedie's formula, the optimal denoiser relates the noisy sample $x_t$ to the score: $E[x_0 \mid x_t] \propto x_t + (1-\bar{\alpha}_t)\nabla_{x_t}\log p(x_t)$.$^{18}$ This connection links diffusion models to score-based generative models trained using techniques like denoising score matching and simulated using methods like Langevin dynamics.$^8$
 
 **Variational Autoencoders (VAEs)**: Diffusion models can be interpreted as a specific type of deep, hierarchical VAE.$^1$ The sequence $x_1,\ldots,x_T$ acts as latent variables. However, there are key distinctions: (1) The "encoder" (forward process $q$) is fixed and non-learned. (2) The latent variables $x_t$ have the same dimensionality as the original data $x_0$. (3) A single "decoder" network (the denoising network $p_\theta$) is typically shared across all time steps $t$, conditioned on $t$. (4) The training objective, while derived from the Evidence Lower Bound (ELBO) common in VAEs, often uses specific reweighting or simplifications.$^1$ This fixed forward process significantly simplifies the optimization landscape compared to standard VAEs where both encoder and decoder are learned simultaneously.$^1$ The focus shifts entirely to learning the reverse denoising function, potentially contributing to the training stability and high sample quality observed in diffusion models.$^{10}$
 
@@ -113,15 +113,15 @@ The goal of training a diffusion model is to adjust the parameters θ of the den
 
 The VLB for diffusion models can be decomposed into a sum of terms, each corresponding to a step in the diffusion process 5:
 
-$$L_\text{VLB} = \mathbb{E}_{q} \Big[ -\log p_\theta(x_0|x_1) + \sum_{t=2}^{T} D_\text{KL}(q(x_{t-1}|x_t,x_0) \| p_\theta(x_{t-1}|x_t)) + D_\text{KL}(q(x_T|x_0) \| p(x_T)) \Big]$$
+$$L_\text{VLB} = \mathbb{E}_{q} \Big[ -\log p_\theta(x_0 \mid x_1) + \sum_{t=2}^{T} D_\text{KL}(q(x_{t-1} \mid x_t,x_0) \| p_\theta(x_{t-1} \mid x_t)) + D_\text{KL}(q(x_T \mid x_0) \| p(x_T)) \Big]$$
 
 where:
 
-$L_{t-1} = D_\text{KL}(q(x_{t-1}|x_t,x_0) \| p_\theta(x_{t-1}|x_t))$ for $t=2,\ldots,T$. This term measures the Kullback-Leibler (KL) divergence between the learned reverse transition $p_\theta$ and the true posterior $q$ at each step. Minimizing this KL divergence forces the learned transition to match the true one.
+$L_{t-1} = D_\text{KL}(q(x_{t-1} \mid x_t,x_0) \| p_\theta(x_{t-1} \mid x_t))$ for $t=2,\ldots,T$. This term measures the Kullback-Leibler (KL) divergence between the learned reverse transition $p_\theta$ and the true posterior $q$ at each step. Minimizing this KL divergence forces the learned transition to match the true one.
 
-$L_T = D_\text{KL}(q(x_T|x_0) \| p_\theta(x_T))$ measures the mismatch between the final noisy state distribution under the forward process and the prior assumed by the reverse process (usually $\mathcal{N}(0,\mathbf{I})$).
+$L_T = D_\text{KL}(q(x_T \mid x_0) \| p_\theta(x_T))$ measures the mismatch between the final noisy state distribution under the forward process and the prior assumed by the reverse process (usually $\mathcal{N}(0,\mathbf{I})$).
 
-$L_0 = -\log p_\theta(x_0|x_1)$ represents the reconstruction likelihood of the original data given the state at $t=1$.
+$L_0 = -\log p_\theta(x_0 \mid x_1)$ represents the reconstruction likelihood of the original data given the state at $t=1$.
 
 To optimize this objective, the learned mean $\mu_\theta(x_t,t)$ must be trained to predict the true posterior mean $\tilde{\mu}_t(x_t,x_0)$. A common and effective parameterization, proposed by Ho et al. (DDPM) $^{10}$, involves training the neural network, denoted $\epsilon_\theta(x_t,t)$, to predict the noise component $\epsilon$ that was added to $x_0$ to obtain $x_t$ via the relation $x_t = \sqrt{\bar{\alpha}_t}x_0 + \sqrt{1-\bar{\alpha}_t}\epsilon$.$^3$ The learned mean $\mu_\theta$ can then be expressed in terms of the predicted noise $\epsilon_\theta$:
 
