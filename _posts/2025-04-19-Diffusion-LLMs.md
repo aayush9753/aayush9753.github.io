@@ -381,7 +381,7 @@ The iterative, non-autoregressive nature of diffusion models offers several pote
 
 - **Flexibility**: The NAR nature allows for generation orders other than left-to-right, such as filling in masked portions of text (e.g., FiLM [50]) or generating tokens in arbitrary orders [48].
 
-- **Potential Speed**: While multi-step latency is high, the parallel computation per step means that for very long sequences, NAR generation could theoretically be faster than sequential AR generation if the number of required diffusion steps ($T_{eff}$) is significantly smaller than the sequence length ($L$) [32].
+- **Potential Speed**: While multi-step latency is high, the parallel computation per step means that for very long sequences, NAR generation could theoretically be faster than sequential AR generation if the number of required diffusion steps (\\(T_{eff}\\)) is significantly smaller than the sequence length (\\(L\\)) [32].
 
 **Self-Correction/Refinement**: The iterative process inherently allows the model to revisit and potentially correct errors or inconsistencies introduced in earlier steps [33]. This contrasts with AR models where errors can accumulate irreversibly. This may help mitigate the "exposure bias" problem seen in AR models, where the model is trained on ground-truth prefixes but tested by generating its own, potentially erroneous, prefixes [33].
 
@@ -391,7 +391,7 @@ The iterative, non-autoregressive nature of diffusion models offers several pote
 
 Despite their potential, diffusion models currently face significant challenges, particularly in the language domain:
 
-**Computational Cost / Sampling Speed**: This is arguably the most significant practical drawback. The need for multiple sequential evaluations of the denoising network (often T=1000 or more in original formulations, though acceleration techniques aim for $T_{eff}$ in the tens or low hundreds) results in high sampling latency compared to the single-pass generation of AR models [1]. Even with acceleration, sampling is often considerably slower than optimized AR inference. Training can also be computationally intensive [68]. This efficiency gap is a major hurdle for widespread adoption.
+**Computational Cost / Sampling Speed**: This is arguably the most significant practical drawback. The need for multiple sequential evaluations of the denoising network (often T=1000 or more in original formulations, though acceleration techniques aim for \\(T_{eff}\\) in the tens or low hundreds) results in high sampling latency compared to the single-pass generation of AR models [1]. Even with acceleration, sampling is often considerably slower than optimized AR inference. Training can also be computationally intensive [68]. This efficiency gap is a major hurdle for widespread adoption.
 
 **Generation Quality (Fluency/Coherence)**: While improving, current Diffusion LLMs often lag behind state-of-the-art AR models (especially large-scale ones) in generating highly fluent, coherent, and contextually appropriate text, particularly for longer sequences or complex tasks [33]. Performance is sensitive to the number of sampling steps, with quality degrading significantly as steps are reduced to improve speed [39].
 
@@ -399,7 +399,7 @@ Despite their potential, diffusion models currently face significant challenges,
 
 **Scalability**: Transformer-based AR models have proven remarkably scalable, with performance consistently improving with model size and data. While initial studies suggest diffusion models also exhibit scaling properties [50], it remains less established whether they can reach the performance of multi-trillion parameter AR models on language tasks [45]. AR models currently dominate the very large language model landscape.
 
-**Likelihood Evaluation**: Calculating the exact likelihood $p_θ(x_0)$ is often intractable for diffusion models, making direct comparison with AR models using standard metrics like perplexity difficult or require approximations [19]. While methods exist to estimate or bound the likelihood, they add complexity.
+**Likelihood Evaluation**: Calculating the exact likelihood \\(p_θ(x_0)\\) is often intractable for diffusion models, making direct comparison with AR models using standard metrics like perplexity difficult or require approximations [19]. While methods exist to estimate or bound the likelihood, they add complexity.
 
 ### 5.4 Training Efficiency and Data Requirements
 
@@ -409,7 +409,7 @@ Despite their potential, diffusion models currently face significant challenges,
 
 ### 5.5 Inference Speed and Latency
 
-**Diffusion LLMs**: Inference latency is primarily determined by the number of sequential denoising steps ($T_{eff}$) multiplied by the time taken for one forward pass of the denoising network. Parallel computation within each step improves throughput for batch processing but does not reduce the latency for generating a single sample [32]. Acceleration techniques that reduce $T_{eff}$ are essential for practical use [1]. For very long sequences, if $T_{eff}$ can be made small enough, NAR diffusion could potentially be faster than sequential AR generation [62].
+**Diffusion LLMs**: Inference latency is primarily determined by the number of sequential denoising steps (\\(T_{eff}\\)) multiplied by the time taken for one forward pass of the denoising network. Parallel computation within each step improves throughput for batch processing but does not reduce the latency for generating a single sample [32]. Acceleration techniques that reduce \\(T_{eff}\\) are essential for practical use [1]. For very long sequences, if \\(T_{eff}\\) can be made small enough, NAR diffusion could potentially be faster than sequential AR generation [62].
 
 **Transformer (AR) LLMs**: Inference latency scales linearly with the length of the sequence to be generated, as tokens are produced one after another. Techniques like KV-caching significantly optimize this process by reusing intermediate computations [62]. AR models are generally very fast for generating short-to-moderate length sequences but become slower for extremely long outputs.
 
@@ -430,7 +430,7 @@ The following table summarizes the key differences and trade-offs between Diffus
 | Generation Paradigm | Iterative Refinement, Non-Autoregressive (NAR) | Sequential Prediction, Autoregressive (AR) |
 | Core Task Learned | Denoising / Reconstruction | Next-Token Prediction |
 | Training Stability | Generally Stable | Stable |
-| Sampling Speed/Latency | Slow (Multi-step, $T_{eff}$ dependent) | Fast (Seq. Length Dependent, KV-caching) |
+| Sampling Speed/Latency | Slow (Multi-step, \\(T_{eff}\\) dependent) | Fast (Seq. Length Dependent, KV-caching) |
 | Parallelism (Inference) | Parallel within each step | Sequential token generation |
 | Controllability | Potentially High (Iterative Guidance) | Indirect (Prompting, Fine-tuning) |
 | Generation Quality | Improving, often lower fluency/coherence currently | State-of-the-Art Fluency/Coherence |
@@ -453,7 +453,7 @@ Models employing these techniques, collectively termed Diffusion Language Models
 
 The field of Diffusion LLMs is rapidly evolving, with numerous active research frontiers aimed at overcoming current limitations and unlocking their full potential. Key challenges and future directions include:
 
-**Sampling Efficiency**: This remains arguably the most critical bottleneck [1]. Research continues to focus on developing faster ODE/SDE solvers, optimized sampling schedules, knowledge distillation techniques, flow-matching approaches, and non-Markovian methods to drastically reduce the number of required network evaluations ($T_{eff}$) without sacrificing generation quality [1]. The future viability of diffusion models as mainstream LLMs hinges critically on solving this efficiency problem.
+**Sampling Efficiency**: This remains arguably the most critical bottleneck [1]. Research continues to focus on developing faster ODE/SDE solvers, optimized sampling schedules, knowledge distillation techniques, flow-matching approaches, and non-Markovian methods to drastically reduce the number of required network evaluations (\\(T_{eff}\\)) without sacrificing generation quality [1]. The future viability of diffusion models as mainstream LLMs hinges critically on solving this efficiency problem.
 
 **Scaling and Quality Improvement**: Closing the performance gap with leading AR models requires scaling Diffusion LLMs to larger parameter counts and training datasets [45]. Understanding the scaling laws specific to diffusion architectures for language is crucial [62]. Continued work is needed to improve the fluency, coherence, factual accuracy, and long-range dependency handling of generated text [33].
 
