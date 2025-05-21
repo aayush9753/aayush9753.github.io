@@ -1,8 +1,7 @@
 ---
 layout: page
-title: FlexDuo: A Pluggable System for Enabling Full-Duplex Capabilities 
-in Speech Dialogue Systems
-permalink: /pages/dm/flexduo/
+title: "FlexDuo - A Pluggable System for Enabling Full-Duplex Capabilities in Speech Dialogue Systems"
+permalink: /dm/flexduo/
 ---
 
 # FlexDuo: A Pluggable System for Enabling Full-Duplex Capabilities in Speech Dialogue Systems
