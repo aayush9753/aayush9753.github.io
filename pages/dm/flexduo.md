@@ -1,11 +1,8 @@
 ---
-layout: post
-title: Dialogue Manager
-category: [speech, ongoing]
-date: 2025-04-28
+layout: page
+title: FlexDuo: A Pluggable System for Enabling Full-Duplex Capabilities in Speech Dialogue Systems
+permalink: /flexduo/
 ---
-
-> [Continue to Part 2]({{ site.baseurl }}/dialogue-manager-part2/)
 
 # FlexDuo: A Pluggable System for Enabling Full-Duplex Capabilities in Speech Dialogue Systems
 
@@ -180,5 +177,4 @@ When deployed, FlexDuo operates as follows:
 
 ![Performance Results]({{ site.baseurl }}/assets/images/dm/flexduo_performance.png)
 
-The system's real-world performance demonstrates that FlexDuo successfully addresses the limitations of existing full-duplex systems while maintaining compatibility with half-duplex LLMs, providing a more natural conversational experience without the need for complete system retraining.
-
+The system's real-world performance demonstrates that FlexDuo successfully addresses the limitations of existing full-duplex systems while maintaining compatibility with half-duplex LLMs, providing a more natural conversational experience without the need for complete system retraining. 
