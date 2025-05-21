@@ -5,24 +5,24 @@ category: inference
 date: 2025-05-21
 ---
 
-# Understanding NVIDIA's Inference Stack
+## Understanding NVIDIA's Inference Stack
 
 NVIDIA has split its inference-serving stack into two closely related but distinct layers. **NVIDIA Dynamo** is the new *distributed* inference-orchestration framework that spans multiple GPU nodes, while **NVIDIA Dynamo-Triton** is simply the well-known Triton Inference Server re-branded as the execution engine within—and still usable outside—the Dynamo platform.
 
-## NVIDIA Dynamo
+### NVIDIA Dynamo
 
 * **Purpose** – Built for *data-center-scale* generative-AI and "reasoning" models, Dynamo coordinates many Triton (or other) workers across racks or clusters. It handles request routing, dynamic load balancing, elastic scaling, and model-specific parallelism strategies (tensor, pipeline, MoE, KV-cache sharding, etc.).
 * **Architecture** – A modular control-plane plus pluggable workers; it disaggregates *prefill* and *decode* phases onto different GPU pools to maximize throughput and token-per-second revenue.
 * **Engine-agnostic** – Workers can run TensorRT-LLM, vLLM, FasterTransformer, Python, or Triton backends, making Dynamo an umbrella scheduler rather than a model runtime itself.
 * **Open Source & Brand-New** – Released March 2025 on GitHub under Apache-2.0 and positioned as the successor and "operating system for AI factories."
 
-## NVIDIA Dynamo-Triton
+### NVIDIA Dynamo-Triton
 
 * **Re-branding of Triton Inference Server** – Triton keeps its code base, APIs, and single-node focus, but is now marketed as **Dynamo-Triton** to signal that it is the default worker engine inside Dynamo.
 * **Scope** – Executes models on one machine (multiple GPUs/CPUs) and already supports real-time, batch, streaming, ensembles, and 20+ backends (TensorFlow, PyTorch, ONNX, XGBoost, etc.).
 * **Standalone or Integrated** – You can still run Triton by itself for edge or on-prem workloads; when deployed under Dynamo, it becomes a managed "worker" receiving requests from the Dynamo router.
 
-## Key Differences at a Glance
+### Key Differences at a Glance
 
 | Aspect            | NVIDIA Dynamo                                                             | NVIDIA Dynamo-Triton                                                 |
 | ----------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------- |
@@ -34,58 +34,58 @@ NVIDIA has split its inference-serving stack into two closely related but distin
 | **Brand History** | New in 2025, "successor" platform to Triton                               | Formerly Triton Inference Server (2018-2024)                         |
 | **Typical Use**   | AI factories, SaaS LLM services, multi-region clusters                    | Edge devices, single-server micro-services, on-prem deployments      |
 
-## When to Use Which?
+### When to Use Which?
 
-### Choose **Dynamo-Triton Alone** if…
+#### Choose **Dynamo-Triton Alone** if…
 
 * You only need to serve models from one server or small GPU pod.
 * Your workloads already fit Triton's feature set (dynamic batching, ensembles, GPU/CPU selection).
 * You prefer maturity and minimal moving parts for on-prem or edge deployment.
 
-### Choose **Full Dynamo (with Dynamo-Triton Workers)** if…
+#### Choose **Full Dynamo (with Dynamo-Triton Workers)** if…
 
 * You must elastically scale an LLM or multimodel pipeline across many servers.
 * Token throughput and GPU-to-GPU load balancing are your bottlenecks.
 * You want a single control plane that can mix Triton, TensorRT-LLM, and specialized LLM runtimes under one scheduler.
 
-## Roadmap and Support
+### Roadmap and Support
 
 NVIDIA states it "remains committed" to Triton; future releases will appear under the Dynamo-Triton label but keep API compatibility, while new distributed features (e.g., KV-cache migration, cross-node batching) land only in Dynamo. Enterprise support is provided via NVIDIA AI Enterprise, and both projects are Apache-2.0 on GitHub.
 
-### TL;DR
+#### TL;DR
 
 *Dynamo* = **data-center-scale orchestration layer** for generative-AI inference.
 *Dynamo-Triton* = **the classic Triton Inference Server**, now one of the worker engines within the broader Dynamo platform, and still usable stand-alone.
 
-# NVIDIA Triton Inference Server
+## NVIDIA Triton Inference Server
 
 Triton Inference Server enables teams to deploy any AI model from multiple deep learning and machine learning frameworks, including TensorRT, TensorFlow, PyTorch, ONNX, OpenVINO, Python, RAPIDS FIL, and more.
 
 Triton Inference Server delivers optimized performance for many query types, including real time, batched, ensembles and audio/video streaming. Triton inference Server is part of NVIDIA AI Enterprise, a software platform that accelerates the data science pipeline and streamlines the development and deployment of production AI.
 
-### [Frameworks Overview]({{ site.baseurl }}/random/model-frameworks/)
+#### [Frameworks Overview]({{ site.baseurl }}/random/model-frameworks/)
 
-## Triton Architecture
+### Triton Architecture
 
 Triton Inference Server's architecture consists of several key components:
 
-### Model Repository
+#### Model Repository
 - File-system based storage for model artifacts
 - Contains model configurations, weights, and metadata
 
-### Request Handling
+#### Request Handling
 - Multiple protocol support:
   - HTTP/REST API
   - gRPC API
   - C API
 - Request routing to appropriate model schedulers
 
-### Model Schedulers
+#### Model Schedulers
 - Per-model scheduling algorithms
 - Dynamic batching capabilities
 - Configurable scheduling policies
 
-### Backend System
+#### Backend System
 - Framework-specific inference engines
 - Support for multiple backends:
   - TensorRT
@@ -94,7 +94,7 @@ Triton Inference Server's architecture consists of several key components:
   - ONNX Runtime
   - Custom backends via C API
 
-### Model Management
+#### Model Management
 - Dedicated management API
 - Protocol support:
   - HTTP/REST
@@ -110,7 +110,7 @@ Triton Inference Server's architecture consists of several key components:
   - Latency
   - Resource utilization
 
-### Extension System
+#### Extension System
 - Backend C API for custom functionality
 - Support for:
   - Custom preprocessing
@@ -119,10 +119,10 @@ Triton Inference Server's architecture consists of several key components:
 
 ![Triton Architecture]({{ site.baseurl }}/assets/images/triton.png)
 
-### [Transport Protocols for Triton]({{ site.baseurl }}/random/transport-protocol/)
+#### [Transport Protocols for Triton]({{ site.baseurl }}/random/transport-protocol/)
 
 
-# Guide: Hosting a Transformer Model on Triton Inference Server
+## Guide: Hosting a Transformer Model on Triton Inference Server
 
 This guide provides a comprehensive approach for deploying transformer models on NVIDIA Triton Inference Server with custom processing capabilities using gRPC.
 
