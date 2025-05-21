@@ -1,0 +1,24 @@
+title: Romit
+author: Romit
+email: ''
+url: r0m1t.com
+baseurl: ""
+description: My second brain
+
+permalink: /:slug.html
+
+favicon: "assets/images/beluga.jpg"
+remote_theme: riggraz/no-style-please
+
+theme_config:
+  appearance: "light"
+  back_home_text: ".."
+  date_format: "%Y-%m-%d"
+  show_description: true
+
+sass:
+  style: compressed
+
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
