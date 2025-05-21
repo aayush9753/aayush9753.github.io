@@ -7,7 +7,7 @@ description: My Cave [WIP - Building using https://r0m1t.com/]
 
 permalink: /:slug.html
 
-favicon: "assets/images/logo.jpg"
+favicon: "assets/images/beluga.jpg"
 remote_theme: riggraz/no-style-please
 
 theme_config:
