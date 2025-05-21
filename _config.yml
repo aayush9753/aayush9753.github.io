@@ -1,13 +1,13 @@
-title: Romit
-author: Romit
+title: Aayush
+author: Aayush
 email: ''
-url: r0m1t.com
+url: aayush9753.github.io
 baseurl: ""
 description: My second brain
 
 permalink: /:slug.html
 
-favicon: "assets/images/beluga.jpg"
+favicon: "assets/images/logo.jpg"
 remote_theme: riggraz/no-style-please
 
 theme_config:
