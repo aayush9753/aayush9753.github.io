@@ -9,51 +9,51 @@ date: 2025-04-19
 
 ### 1.1 Core Concept: Iterative Noising and Denoising
 
-Diffusion probabilistic models, commonly referred to as diffusion models, represent a powerful class of generative models that have demonstrated state-of-the-art performance in various domains, particularly in generating high-fidelity images and audio.$^1$ The core idea, inspired by principles from non-equilibrium thermodynamics $^5$, is to systematically destroy structure in data through an iterative forward diffusion process and then learn a reverse process that restores the structure, effectively generating data samples from noise.$^1$
+Diffusion probabilistic models, commonly referred to as diffusion models, represent a powerful class of generative models that have demonstrated state-of-the-art performance in various domains, particularly in generating high-fidelity images and audio.[1] The core idea, inspired by principles from non-equilibrium thermodynamics [5], is to systematically destroy structure in data through an iterative forward diffusion process and then learn a reverse process that restores the structure, effectively generating data samples from noise.[1]
 
-This generative paradigm contrasts significantly with other established methods like Generative Adversarial Networks (GANs) or standard Variational Autoencoders (VAEs).$^1$ While GANs involve a complex adversarial training dynamic and VAEs rely on often simple surrogate posterior distributions, diffusion models employ a conceptually straightforward two-phase mechanism. The first phase, the forward process (also called the diffusion or noising process), is typically fixed and involves gradually adding noise (usually Gaussian) to an input data sample over a sequence of time steps, progressively corrupting the data until it resembles pure noise.$^1$ The second phase, the reverse process (also known as the denoising or generative process), is learned. It aims to reverse the noising steps, starting from a sample of pure noise and iteratively refining it to produce a sample that resembles the original data distribution.$^1$ This iterative refinement allows the model to potentially correct errors made in earlier steps and gradually build complex data structures.$^3$
+This generative paradigm contrasts significantly with other established methods like Generative Adversarial Networks (GANs) or standard Variational Autoencoders (VAEs).[1] While GANs involve a complex adversarial training dynamic and VAEs rely on often simple surrogate posterior distributions, diffusion models employ a conceptually straightforward two-phase mechanism. The first phase, the forward process (also called the diffusion or noising process), is typically fixed and involves gradually adding noise (usually Gaussian) to an input data sample over a sequence of time steps, progressively corrupting the data until it resembles pure noise.[1] The second phase, the reverse process (also known as the denoising or generative process), is learned. It aims to reverse the noising steps, starting from a sample of pure noise and iteratively refining it to produce a sample that resembles the original data distribution.[1] This iterative refinement allows the model to potentially correct errors made in earlier steps and gradually build complex data structures.[3]
 
-The thermodynamic analogy posits the initial data distribution as being far from equilibrium. The forward process models the diffusion towards a simple equilibrium distribution (e.g., Gaussian noise). The learned reverse process then simulates the reversal of this diffusion, guiding samples from the simple equilibrium state back towards the complex, structured data manifold.$^8$
+The thermodynamic analogy posits the initial data distribution as being far from equilibrium. The forward process models the diffusion towards a simple equilibrium distribution (e.g., Gaussian noise). The learned reverse process then simulates the reversal of this diffusion, guiding samples from the simple equilibrium state back towards the complex, structured data manifold.[8]
 
 ### 1.2 The Forward Process (Diffusion): Mathematical Formulation
 
-The forward diffusion process is mathematically defined as a Markov chain.$^3$ Starting with an initial data sample $x_0$ drawn from the true data distribution $q(x_0)$, the process generates a sequence of latent variables $x_1,x_2,\ldots,x_T$ by adding Gaussian noise at each discrete time step $t$, where $t$ ranges from 1 to $T$. The transition probability at each step is defined by a conditional Gaussian distribution $^3$:
+The forward diffusion process is mathematically defined as a Markov chain.[3] Starting with an initial data sample $x_0$ drawn from the true data distribution $q(x_0)$, the process generates a sequence of latent variables $x_1,x_2,\ldots,x_T$ by adding Gaussian noise at each discrete time step $t$, where $t$ ranges from 1 to $T$. The transition probability at each step is defined by a conditional Gaussian distribution [3]:
 
 $$q(x_t \mid x_{t-1}) = \mathcal{N}(x_t; \sqrt{1-\beta_t}x_{t-1}, \beta_t \mathbf{I})$$
 
-Here, $x_t$ represents the state (noisy data sample) at time step $t$, $\mathcal{N}(\cdot;\mu,\Sigma)$ denotes a Gaussian distribution with mean $\mu$ and covariance $\Sigma$, $\mathbf{I}$ is the identity matrix, and $\{\beta_t\}_{t=1}^T$ is a pre-defined variance schedule.$^3$ The values $\beta_t$ are typically small positive numbers $(0<\beta_t<1)$ that control the amount of noise added at each step. The variance schedule is a crucial design choice; common schedules include linear increases in $\beta_t$ (e.g., from $10^{-4}$ to $0.02$ $^1$) or cosine schedules.$^3$ These schedules ensure that the data is gradually corrupted. While typically fixed, the noise schedule itself can potentially be learned.$^1$ The Markov property implies that the state $x_t$ depends only on the immediately preceding state $x_{t-1}$.$^3$ The joint probability of the entire sequence of noisy samples given the initial data is the product of these transitions:
+Here, $x_t$ represents the state (noisy data sample) at time step $t$, $\mathcal{N}(\cdot;\mu,\Sigma)$ denotes a Gaussian distribution with mean $\mu$ and covariance $\Sigma$, $\mathbf{I}$ is the identity matrix, and $\{\beta_t\}_{t=1}^T$ is a pre-defined variance schedule.[3] The values $\beta_t$ are typically small positive numbers $(0<\beta_t<1)$ that control the amount of noise added at each step. The variance schedule is a crucial design choice; common schedules include linear increases in $\beta_t$ (e.g., from $10^{-4}$ to $0.02$ [1]) or cosine schedules.[3] These schedules ensure that the data is gradually corrupted. While typically fixed, the noise schedule itself can potentially be learned.[1] The Markov property implies that the state $x_t$ depends only on the immediately preceding state $x_{t-1}$.[3] The joint probability of the entire sequence of noisy samples given the initial data is the product of these transitions:
 
 $$q(x_{1:T} \mid x_0) = \prod_{t=1}^T q(x_t \mid x_{t-1})$$
 
-$^3$
+[3]
 
-A significant property of this Gaussian forward process is that we can sample $x_t$ at any arbitrary time step $t$ directly from the initial data $x_0$ in closed form, without iterating through all intermediate steps.$^3$ By defining $\alpha_t=1-\beta_t$ and $\bar{\alpha}_t=\prod_{i=1}^t \alpha_i$ $^5$, the conditional distribution $q(x_t \mid x_0)$ is also Gaussian:
+A significant property of this Gaussian forward process is that we can sample $x_t$ at any arbitrary time step $t$ directly from the initial data $x_0$ in closed form, without iterating through all intermediate steps.[3] By defining $\alpha_t=1-\beta_t$ and $\bar{\alpha}_t=\prod_{i=1}^t \alpha_i$ [5], the conditional distribution $q(x_t \mid x_0)$ is also Gaussian:
 
 $$q(x_t \mid x_0) = \mathcal{N}(x_t; \sqrt{\bar{\alpha}_t}x_0, (1-\bar{\alpha}_t)\mathbf{I})$$
 
-$^3$
+[3]
 
 This allows for efficient training, as we can directly compute a noisy version $x_t$ for any $t$ using the reparameterization trick: sample a standard Gaussian noise vector $\epsilon \sim \mathcal{N}(0,\mathbf{I})$ and compute:
 
 $$x_t = \sqrt{\bar{\alpha}_t}x_0 + \sqrt{1-\bar{\alpha}_t}\epsilon$$
 
-$^3$
+[3]
 
-As the number of steps $T$ becomes large, $\bar{\alpha}_T = \prod_{t=1}^T (1-\beta_t)$ approaches zero. Consequently, the distribution of $x_T$ converges to an isotropic Gaussian distribution $\mathcal{N}(0,\mathbf{I})$, effectively erasing all information about the original data $x_0$.$^5$
+As the number of steps $T$ becomes large, $\bar{\alpha}_T = \prod_{t=1}^T (1-\beta_t)$ approaches zero. Consequently, the distribution of $x_T$ converges to an isotropic Gaussian distribution $\mathcal{N}(0,\mathbf{I})$, effectively erasing all information about the original data $x_0$.[5]
 
 ### 1.3 The Reverse Process (Denoising): Mathematical Formulation
 
-The generative power of diffusion models lies in learning to reverse the forward diffusion process. The goal is to learn a model $p_\theta$ that approximates the true posterior probability distribution of the reverse transitions, $q(x_{t-1} \mid x_t)$.$^3$ If the noise added at each forward step, $\beta_t$, is sufficiently small, the reverse transition $q(x_{t-1} \mid x_t)$ can also be shown to be Gaussian.$^5$ However, computing $q(x_{t-1} \mid x_t)$ directly is intractable because it requires marginalizing over the entire data distribution.
+The generative power of diffusion models lies in learning to reverse the forward diffusion process. The goal is to learn a model $p_\theta$ that approximates the true posterior probability distribution of the reverse transitions, $q(x_{t-1} \mid x_t)$.[3] If the noise added at each forward step, $\beta_t$, is sufficiently small, the reverse transition $q(x_{t-1} \mid x_t)$ can also be shown to be Gaussian.[5] However, computing $q(x_{t-1} \mid x_t)$ directly is intractable because it requires marginalizing over the entire data distribution.
 
 Therefore, we parameterize the reverse process using a neural network with parameters $\theta$. This network learns to approximate the reverse transitions with conditional Gaussian distributions:
 
 $$p_\theta(x_{t-1} \mid x_t) = \mathcal{N}(x_{t-1};\mu_\theta(x_t,t),\Sigma_\theta(x_t,t))$$
 
-$^3$
+[3]
 
 Here, $\mu_\theta(x_t,t)$ and $\Sigma_\theta(x_t,t)$ are the mean and covariance matrix of the Gaussian transition at time step $t$, predicted by the neural network given the current state $x_t$ and the time step $t$.
 
-While $q(x_{t-1} \mid x_t)$ is intractable, the posterior distribution conditioned on the original data, $q(x_{t-1} \mid x_t, x_0)$, is tractable and can be derived using Bayes' theorem.$^5$ It is also a Gaussian distribution:
+While $q(x_{t-1} \mid x_t)$ is intractable, the posterior distribution conditioned on the original data, $q(x_{t-1} \mid x_t, x_0)$, is tractable and can be derived using Bayes' theorem.[5] It is also a Gaussian distribution:
 
 $$q(x_{t-1} \mid x_t, x_0) = \mathcal{N}(x_{t-1};\tilde{\mu}_t(x_t,x_0),\tilde{\beta}_t\mathbf{I})$$
 
@@ -61,29 +61,29 @@ where the mean $\tilde{\mu}_t$ and variance $\tilde{\beta}_t$ are functions of $
 
 $$\tilde{\mu}_t(x_t,x_0) = \frac{\sqrt{\alpha_t}(1-\bar{\alpha}_{t-1})}{1-\bar{\alpha}_t}x_t + \frac{\sqrt{\bar{\alpha}_{t-1}}\beta_t}{1-\bar{\alpha}_t}x_0$$
 
-$^{18}$
+[18]
 
 $$\tilde{\beta}_t = \frac{1-\bar{\alpha}_{t-1}}{1-\bar{\alpha}_t}\beta_t$$
 
-$^{18}$
+[18]
 
-The objective during training is to make the learned reverse transitions $p_\theta(x_{t-1} \mid x_t)$ closely match these true posterior transitions $q(x_{t-1} \mid x_t, x_0)$. The reverse process starts generation by sampling from a prior distribution $p(x_T)$, which is typically set to the standard Gaussian $\mathcal{N}(0,\mathbf{I})$ (matching the distribution reached by the forward process).$^5$ Then, it iteratively samples $x_{t-1}$ from $p_\theta(x_{t-1} \mid x_t)$ for $t=T,T-1,\ldots,1$, ultimately producing a generated sample $x_0$.$^5$
+The objective during training is to make the learned reverse transitions $p_\theta(x_{t-1} \mid x_t)$ closely match these true posterior transitions $q(x_{t-1} \mid x_t, x_0)$. The reverse process starts generation by sampling from a prior distribution $p(x_T)$, which is typically set to the standard Gaussian $\mathcal{N}(0,\mathbf{I})$ (matching the distribution reached by the forward process).[5] Then, it iteratively samples $x_{t-1}$ from $p_\theta(x_{t-1} \mid x_t)$ for $t=T,T-1,\ldots,1$, ultimately producing a generated sample $x_0$.[5]
 
 ### 1.4 Underlying Principles: Connections to Other Models
 
-The theoretical underpinnings of diffusion models reveal a remarkable convergence of concepts drawn from diverse fields such as non-equilibrium thermodynamics, score matching, variational inference, and Markov decision processes.$^3$ This confluence suggests a potentially deep and unifying mathematical framework for generative modeling.
+The theoretical underpinnings of diffusion models reveal a remarkable convergence of concepts drawn from diverse fields such as non-equilibrium thermodynamics, score matching, variational inference, and Markov decision processes.[3] This confluence suggests a potentially deep and unifying mathematical framework for generative modeling.
 
-**Thermodynamics**: As mentioned, the core intuition draws from non-equilibrium thermodynamics.$^5$ The forward process mirrors the diffusion of particles from a complex, low-entropy state (data distribution) towards a high-entropy, simple equilibrium state (Gaussian noise). The learned reverse process effectively reverses entropy, guiding samples back to the structured data manifold.$^8$
+**Thermodynamics**: As mentioned, the core intuition draws from non-equilibrium thermodynamics.[5] The forward process mirrors the diffusion of particles from a complex, low-entropy state (data distribution) towards a high-entropy, simple equilibrium state (Gaussian noise). The learned reverse process effectively reverses entropy, guiding samples back to the structured data manifold.[8]
 
-**Score Matching**: There is a deep connection between the denoising objective in diffusion models and score matching.$^{10}$ The score of a distribution $p(x)$ is defined as the gradient of its log-probability with respect to the data, $\nabla_x \log p(x)$. It can be shown that training the neural network $\epsilon_\theta(x_t,t)$ to predict the noise $\epsilon$ added at step $t$ is equivalent to learning the score function of the noisy data distribution $p(x_t)$.$^{14}$ Specifically, using Tweedie's formula, the optimal denoiser relates the noisy sample $x_t$ to the score: $E[x_0 \mid x_t] \propto x_t + (1-\bar{\alpha}_t)\nabla_{x_t}\log p(x_t)$.$^{18}$ This connection links diffusion models to score-based generative models trained using techniques like denoising score matching and simulated using methods like Langevin dynamics.$^8$
+**Score Matching**: There is a deep connection between the denoising objective in diffusion models and score matching.[10] The score of a distribution $p(x)$ is defined as the gradient of its log-probability with respect to the data, $\nabla_x \log p(x)$. It can be shown that training the neural network $\epsilon_\theta(x_t,t)$ to predict the noise $\epsilon$ added at step $t$ is equivalent to learning the score function of the noisy data distribution $p(x_t)$.[14] Specifically, using Tweedie's formula, the optimal denoiser relates the noisy sample $x_t$ to the score: $E[x_0 \mid x_t] \propto x_t + (1-\bar{\alpha}_t)\nabla_{x_t}\log p(x_t)$.[18] This connection links diffusion models to score-based generative models trained using techniques like denoising score matching and simulated using methods like Langevin dynamics.[8]
 
-**Variational Autoencoders (VAEs)**: Diffusion models can be interpreted as a specific type of deep, hierarchical VAE.$^1$ The sequence $x_1,\ldots,x_T$ acts as latent variables. However, there are key distinctions: (1) The "encoder" (forward process $q$) is fixed and non-learned. (2) The latent variables $x_t$ have the same dimensionality as the original data $x_0$. (3) A single "decoder" network (the denoising network $p_\theta$) is typically shared across all time steps $t$, conditioned on $t$. (4) The training objective, while derived from the Evidence Lower Bound (ELBO) common in VAEs, often uses specific reweighting or simplifications.$^1$ This fixed forward process significantly simplifies the optimization landscape compared to standard VAEs where both encoder and decoder are learned simultaneously.$^1$ The focus shifts entirely to learning the reverse denoising function, potentially contributing to the training stability and high sample quality observed in diffusion models.$^{10}$
+**Variational Autoencoders (VAEs)**: Diffusion models can be interpreted as a specific type of deep, hierarchical VAE.[1] The sequence $x_1,\ldots,x_T$ acts as latent variables. However, there are key distinctions: (1) The "encoder" (forward process $q$) is fixed and non-learned. (2) The latent variables $x_t$ have the same dimensionality as the original data $x_0$. (3) A single "decoder" network (the denoising network $p_\theta$) is typically shared across all time steps $t$, conditioned on $t$. (4) The training objective, while derived from the Evidence Lower Bound (ELBO) common in VAEs, often uses specific reweighting or simplifications.[1] This fixed forward process significantly simplifies the optimization landscape compared to standard VAEs where both encoder and decoder are learned simultaneously.[1] The focus shifts entirely to learning the reverse denoising function, potentially contributing to the training stability and high sample quality observed in diffusion models.[10]
 
-**Energy-Based Models (EBMs)**: Connections also exist with EBMs. Frameworks like Diffusion by Maximum Entropy IRL (DxMI) formulate a minimax problem where an EBM provides log density estimates as reward signals to guide the diffusion model's training.$^{20}$ The EBM learns an energy function whose negative value approximates the log probability density.
+**Energy-Based Models (EBMs)**: Connections also exist with EBMs. Frameworks like Diffusion by Maximum Entropy IRL (DxMI) formulate a minimax problem where an EBM provides log density estimates as reward signals to guide the diffusion model's training.[20] The EBM learns an energy function whose negative value approximates the log probability density.
 
-**Reinforcement Learning (RL)**: The sequential generation process of diffusion models can be framed as a Markov Decision Process (MDP), where the state is $(x_t,t)$ and the action is selecting the next state $x_{t-1}$.$^{20}$ This perspective allows the application of RL techniques. For instance, Inverse Reinforcement Learning (IRL) can be used to infer a reward function from the diffusion trajectory, enabling the discovery of faster sampling paths.$^{20}$ RLHF (Reinforcement Learning from Human Feedback) and related techniques like DPO (Direct Preference Optimization) are also being applied to fine-tune diffusion models based on human preferences or other reward signals, particularly for aligning model outputs (e.g., in text-to-image generation).$^{21}$
+**Reinforcement Learning (RL)**: The sequential generation process of diffusion models can be framed as a Markov Decision Process (MDP), where the state is $(x_t,t)$ and the action is selecting the next state $x_{t-1}$.[20] This perspective allows the application of RL techniques. For instance, Inverse Reinforcement Learning (IRL) can be used to infer a reward function from the diffusion trajectory, enabling the discovery of faster sampling paths.[20] RLHF (Reinforcement Learning from Human Feedback) and related techniques like DPO (Direct Preference Optimization) are also being applied to fine-tune diffusion models based on human preferences or other reward signals, particularly for aligning model outputs (e.g., in text-to-image generation).[21]
 
-The ability to frame diffusion models using concepts from these diverse fields indicates that they tap into fundamental principles of probability, optimization, and dynamics. This interrelation implies that techniques and theoretical understanding from one field might be transferable to improve diffusion models, such as using RL for faster sampling or EBMs for guidance.$^{20}$
+The ability to frame diffusion models using concepts from these diverse fields indicates that they tap into fundamental principles of probability, optimization, and dynamics. This interrelation implies that techniques and theoretical understanding from one field might be transferable to improve diffusion models, such as using RL for faster sampling or EBMs for guidance.[20]
 
 ## Section 2: Architecture and Training of Diffusion Models
 
@@ -478,147 +478,147 @@ In conclusion, diffusion models offer a compelling alternative generative paradi
 
 Works cited
 
-http://www.cs.unc.edu , accessed on April 18, 2025, https://www.cs.unc.edu/~ronisen/teaching/fall_2022/pdf_lectures/lecture7-8_diffusion_model.pdf
+[1] http://www.cs.unc.edu, accessed on April 18, 2025, https://www.cs.unc.edu/~ronisen/teaching/fall_2022/pdf_lectures/lecture7-8_diffusion_model.pdf
 
-Diffusion Models and Representation Learning: A Survey - arXiv, accessed on April 18, 2025, https://arxiv.org/html/2407.00783v1 
+[2] Diffusion Models and Representation Learning: A Survey - arXiv, accessed on April 18, 2025, https://arxiv.org/html/2407.00783v1 
 
-How diffusion models work: the math from scratch | AI Summer, accessed on April 18, 2025, https://theaisummer.com/diffusion-models/ 
+[3] How diffusion models work: the math from scratch | AI Summer, accessed on April 18, 2025, https://theaisummer.com/diffusion-models/ 
 
-The Missing U for Efficient Diffusion Models - arXiv, accessed on April 18, 2025, https://arxiv.org/html/2310.20092v4 
+[4] The Missing U for Efficient Diffusion Models - arXiv, accessed on April 18, 2025, https://arxiv.org/html/2310.20092v4 
 
-What are Diffusion Models? | Lil'Log, accessed on April 18, 2025, https://lilianweng.github.io/posts/2021-07-11-diffusion-models/ 
+[5] What are Diffusion Models? | Lil'Log, accessed on April 18, 2025, https://lilianweng.github.io/posts/2021-07-11-diffusion-models/ 
 
-Lecture Notes in Probabilistic Diffusion Models - arXiv, accessed on April 18, 2025, https://arxiv.org/html/2312.10393v1 
+[6] Lecture Notes in Probabilistic Diffusion Models - arXiv, accessed on April 18, 2025, https://arxiv.org/html/2312.10393v1 
 
-Step by Step visual introduction to Diffusion Models. - Blog by Kemal Erdem, accessed on April 18, 2025, https://erdem.pl/2023/11/step-by-step-visual-introduction-to-diffusion-models/ 
+[7] Step by Step visual introduction to Diffusion Models. - Blog by Kemal Erdem, accessed on April 18, 2025, https://erdem.pl/2023/11/step-by-step-visual-introduction-to-diffusion-models/ 
 
-Diffusion model - Wikipedia, accessed on April 18, 2025, https://en.wikipedia.org/wiki/Diffusion_model 
+[8] Diffusion model - Wikipedia, accessed on April 18, 2025, https://en.wikipedia.org/wiki/Diffusion_model 
 
-http://arxiv.org , accessed on April 18, 2025, https://arxiv.org/pdf/2210.08933
+[9] http://arxiv.org, accessed on April 18, 2025, https://arxiv.org/pdf/2210.08933
 
-proceedings.neurips.cc, accessed on April 18, 2025, https://proceedings.neurips.cc/paper/2020/file/4c5bcfec8584af0d967f1ab10179ca4b-Paper.pdf
+[10] proceedings.neurips.cc, accessed on April 18, 2025, https://proceedings.neurips.cc/paper/2020/file/4c5bcfec8584af0d967f1ab10179ca4b-Paper.pdf
 
-Variational Autoencoders and Diffusion Models - CS231n, accessed on April 18, 2025, https://cs231n.stanford.edu/slides/2023/lecture_15.pdf
+[11] Variational Autoencoders and Diffusion Models - CS231n, accessed on April 18, 2025, https://cs231n.stanford.edu/slides/2023/lecture_15.pdf
 
-What is the Reverse Diffusion Process? - Analytics Vidhya, accessed on April 18, 2025, https://www.analyticsvidhya.com/blog/2024/07/reverse-diffusion-process/ 
+[12] What is the Reverse Diffusion Process? - Analytics Vidhya, accessed on April 18, 2025, https://www.analyticsvidhya.com/blog/2024/07/reverse-diffusion-process/ 
 
-Introduction to Diffusion Models for Machine Learning | SuperAnnotate, accessed on April 18, 2025, https://www.superannotate.com/blog/diffusion-models 
+[13] Introduction to Diffusion Models for Machine Learning | SuperAnnotate, accessed on April 18, 2025, https://www.superannotate.com/blog/diffusion-models 
 
-Introduction to Diffusion Models for Machine Learning - AssemblyAI, accessed on April 18, 2025, https://www.assemblyai.com/blog/diffusion-models-for-machine-learning-introduction 
+[14] Introduction to Diffusion Models for Machine Learning - AssemblyAI, accessed on April 18, 2025, https://www.assemblyai.com/blog/diffusion-models-for-machine-learning-introduction 
 
-An In-Depth Guide to Denoising Diffusion Probabilistic Models DDPM – Theory to Implementation - LearnOpenCV, accessed on April 18, 2025, https://learnopencv.com/denoising-diffusion-probabilistic-models/ 
+[15] An In-Depth Guide to Denoising Diffusion Probabilistic Models DDPM – Theory to Implementation - LearnOpenCV, accessed on April 18, 2025, https://learnopencv.com/denoising-diffusion-probabilistic-models/ 
 
-Diffusion Transformer (DiT) Models: A Beginner's Guide - Encord, accessed on April 18, 2025, https://encord.com/blog/diffusion-models-with-transformers/ 
+[16] Diffusion Transformer (DiT) Models: A Beginner's Guide - Encord, accessed on April 18, 2025, https://encord.com/blog/diffusion-models-with-transformers/ 
 
-An Introduction to Diffusion Models and Stable Diffusion - Marvik - Blog, accessed on April 18, 2025, https://blog.marvik.ai/2023/11/28/an-introduction-to-diffusion-models-and-stable-diffusion/ 
+[17] An Introduction to Diffusion Models and Stable Diffusion - Marvik - Blog, accessed on April 18, 2025, https://blog.marvik.ai/2023/11/28/an-introduction-to-diffusion-models-and-stable-diffusion/ 
 
-Lecture 15. Diffusion Models - http://Math.Utah.Edu , accessed on April 18, 2025, https://www.math.utah.edu/~bwang/mathds/Lecture15.pdf
+[18] Lecture 15. Diffusion Models - http://Math.Utah.Edu, accessed on April 18, 2025, https://www.math.utah.edu/~bwang/mathds/Lecture15.pdf
 
-Diffusion Models: A Comprehensive Survey of Methods and Applications, accessed on April 18, 2025, https://accesson.kisti.re.kr/upload2/article/originPdf/004538/ATN0045381127.pdf
+[19] Diffusion Models: A Comprehensive Survey of Methods and Applications, accessed on April 18, 2025, https://accesson.kisti.re.kr/upload2/article/originPdf/004538/ATN0045381127.pdf
 
-Maximum Entropy Inverse Reinforcement Learning of Diffusion Models with Energy-Based Models - NeurIPS, accessed on April 18, 2025, https://proceedings.neurips.cc/paper_files/paper/2024/file/2bed6c14cd5ea97a9bc1e6094941bde7-Paper-Conference.pdf
+[20] Maximum Entropy Inverse Reinforcement Learning of Diffusion Models with Energy-Based Models - NeurIPS, accessed on April 18, 2025, https://proceedings.neurips.cc/paper_files/paper/2024/file/2bed6c14cd5ea97a9bc1e6094941bde7-Paper-Conference.pdf
 
-REVIEW - Oxford Academic, accessed on April 18, 2025, https://academic.oup.com/nsr/article-pdf/11/12/nwae348/61414473/nwae348.pdf
+[21] REVIEW - Oxford Academic, accessed on April 18, 2025, https://academic.oup.com/nsr/article-pdf/11/12/nwae348/61414473/nwae348.pdf
 
-xie-lab-ml/awesome-alignment-of-diffusion-models - GitHub, accessed on April 18, 2025, https://github.com/xie-lab-ml/awesome-alignment-of-diffusion-models 
+[22] xie-lab-ml/awesome-alignment-of-diffusion-models - GitHub, accessed on April 18, 2025, https://github.com/xie-lab-ml/awesome-alignment-of-diffusion-models 
 
-Unet Architecture for Diffusion Models | Restackio, accessed on April 18, 2025, https://www.restack.io/p/ai-diffusion-educational-resources-answer-unet-architecture 
+[23] Unet Architecture for Diffusion Models | Restackio, accessed on April 18, 2025, https://www.restack.io/p/ai-diffusion-educational-resources-answer-unet-architecture 
 
-Unet Architecture Explained | Restackio, accessed on April 18, 2025, https://www.restack.io/p/ai-diffusion-educational-resources-answer-unet-architecture-explained 
+[24] Unet Architecture Explained | Restackio, accessed on April 18, 2025, https://www.restack.io/p/ai-diffusion-educational-resources-answer-unet-architecture-explained 
 
-U-Net - Wikipedia, accessed on April 18, 2025, https://en.wikipedia.org/wiki/U-Net 
+[25] U-Net - Wikipedia, accessed on April 18, 2025, https://en.wikipedia.org/wiki/U-Net 
 
-The U-Net (actually) explained in 10 minutes - YouTube, accessed on April 18, 2025, https://m.youtube.com/watch?v=NhdzGfB1q74&pp=ygUSI21hbWFiYW5hdW5ldGFyaWth
+[26] The U-Net (actually) explained in 10 minutes - YouTube, accessed on April 18, 2025, https://m.youtube.com/watch?v=NhdzGfB1q74&pp=ygUSI21hbWFiYW5hdW5ldGFyaWth
 
-Train a diffusion model - Hugging Face, accessed on April 18, 2025, https://huggingface.co/docs/diffusers/tutorials/basic_training 
+[27] Train a diffusion model - Hugging Face, accessed on April 18, 2025, https://huggingface.co/docs/diffusers/tutorials/basic_training 
 
-How to train Diffusion model with additional loss? - Artificial Intelligence Stack Exchange, accessed on April 18, 2025, https://ai.stackexchange.com/questions/40981/how-to-train-diffusion-model-with-additional-loss 
+[28] How to train Diffusion model with additional loss? - Artificial Intelligence Stack Exchange, accessed on April 18, 2025, https://ai.stackexchange.com/questions/40981/how-to-train-diffusion-model-with-additional-loss 
 
-[D] Loss function in Diffusion models : r/MachineLearning - Reddit, accessed on April 18, 2025, https://www.reddit.com/r/MachineLearning/comments/wvnnvb/d_loss_function_in_diffusion_models/ 
+[29] [D] Loss function in Diffusion models : r/MachineLearning - Reddit, accessed on April 18, 2025, https://www.reddit.com/r/MachineLearning/comments/wvnnvb/d_loss_function_in_diffusion_models/ 
 
-Diffusion Models | Towards Data Science, accessed on April 18, 2025, https://towardsdatascience.com/diffusion-models-91b75430ec2/ 
+[30] Diffusion Models | Towards Data Science, accessed on April 18, 2025, https://towardsdatascience.com/diffusion-models-91b75430ec2/ 
 
-[D] Weird loss behaviour with difusion models. : r/MachineLearning - Reddit, accessed on April 18, 2025, https://www.reddit.com/r/MachineLearning/comments/14wobo3/d_weird_loss_behaviour_with_difusion_models/ 
+[31] [D] Weird loss behaviour with difusion models. : r/MachineLearning - Reddit, accessed on April 18, 2025, https://www.reddit.com/r/MachineLearning/comments/14wobo3/d_weird_loss_behaviour_with_difusion_models/ 
 
-Diffusion Models for Non-autoregressive Text Generation: A Survey - IJCAI, accessed on April 18, 2025, https://www.ijcai.org/proceedings/2023/0750.pdf
+[32] Diffusion Models for Non-autoregressive Text Generation: A Survey - IJCAI, accessed on April 18, 2025, https://www.ijcai.org/proceedings/2023/0750.pdf
 
-PLANNER: Generating Diversified Paragraph via Latent Language Diffusion Model - NIPS papers, accessed on April 18, 2025, https://papers.nips.cc/paper_files/paper/2023/file/fdba5e0a9b57fce03e89cc0cad0a24e9-Paper-Conference.pdf
+[33] PLANNER: Generating Diversified Paragraph via Latent Language Diffusion Model - NIPS papers, accessed on April 18, 2025, https://papers.nips.cc/paper_files/paper/2023/file/fdba5e0a9b57fce03e89cc0cad0a24e9-Paper-Conference.pdf
 
-Diffusion Models: A Comprehensive Survey of Methods and Applications - arXiv, accessed on April 18, 2025, https://arxiv.org/html/2209.00796v13 
+[34] Diffusion Models: A Comprehensive Survey of Methods and Applications - arXiv, accessed on April 18, 2025, https://arxiv.org/html/2209.00796v13 
 
-Diffusion models in text generation: a survey - PMC, accessed on April 18, 2025, https://pmc.ncbi.nlm.nih.gov/articles/PMC10909201/ 
+[35] Diffusion models in text generation: a survey - PMC, accessed on April 18, 2025, https://pmc.ncbi.nlm.nih.gov/articles/PMC10909201/ 
 
-Review History for Diffusion models in text generation: a survey [PeerJ], accessed on April 18, 2025, https://peerj.com/articles/cs-1905/reviews/ 
+[36] Review History for Diffusion models in text generation: a survey [PeerJ], accessed on April 18, 2025, https://peerj.com/articles/cs-1905/reviews/ 
 
-http://arxiv.org , accessed on April 18, 2025, https://arxiv.org/pdf/2305.04044
+[37] http://arxiv.org, accessed on April 18, 2025, https://arxiv.org/pdf/2305.04044
 
-NeurIPS Poster Fast Sampling via Discrete Non-Markov Diffusion Models with Predetermined Transition Time, accessed on April 18, 2025, https://neurips.cc/virtual/2024/poster/95646 
+[38] NeurIPS Poster Fast Sampling via Discrete Non-Markov Diffusion Models with Predetermined Transition Time, accessed on April 18, 2025, https://neurips.cc/virtual/2024/poster/95646 
 
-Energy-Based Diffusion Language Models for Text Generation - arXiv, accessed on April 18, 2025, https://arxiv.org/html/2410.21357v3 
+[39] Energy-Based Diffusion Language Models for Text Generation - arXiv, accessed on April 18, 2025, https://arxiv.org/html/2410.21357v3 
 
-Enable Fast Sampling for Seq2Seq Text Diffusion - ACL Anthology, accessed on April 18, 2025, https://aclanthology.org/2024.findings-emnlp.497.pdf
+[40] Enable Fast Sampling for Seq2Seq Text Diffusion - ACL Anthology, accessed on April 18, 2025, https://aclanthology.org/2024.findings-emnlp.497.pdf
 
-http://openreview.net , accessed on April 18, 2025, https://openreview.net/pdf?id=3s9IrEsjLyk
+[41] http://openreview.net, accessed on April 18, 2025, https://openreview.net/pdf?id=3s9IrEsjLyk
 
-Empowering Diffusion Models on the Embedding Space for Text Generation - ACL Anthology, accessed on April 18, 2025, https://aclanthology.org/2024.naacl-long.261.pdf
+[42] Empowering Diffusion Models on the Embedding Space for Text Generation - ACL Anthology, accessed on April 18, 2025, https://aclanthology.org/2024.naacl-long.261.pdf
 
-arXiv:2305.14671v2 [cs.CL] 14 Jun 2023, accessed on April 18, 2025, https://arxiv.org/pdf/2305.14671
+[43] arXiv:2305.14671v2 [cs.CL] 14 Jun 2023, accessed on April 18, 2025, https://arxiv.org/pdf/2305.14671
 
-DiffuSeq-v2: Bridging Discrete and Continuous Text Spaces for Accelerated Seq2Seq Diffusion Models - ACL Anthology, accessed on April 18, 2025, https://aclanthology.org/2023.findings-emnlp.660.pdf
+[44] DiffuSeq-v2: Bridging Discrete and Continuous Text Spaces for Accelerated Seq2Seq Diffusion Models - ACL Anthology, accessed on April 18, 2025, https://aclanthology.org/2023.findings-emnlp.660.pdf
 
-Chain-of-Thought Reasoning in Diffusion Language Models - arXiv, accessed on April 18, 2025, https://arxiv.org/pdf/2402.07754
+[45] Chain-of-Thought Reasoning in Diffusion Language Models - arXiv, accessed on April 18, 2025, https://arxiv.org/pdf/2402.07754
 
-Chain-of-Thought Reasoning in Diffusion Language Models - NeurIPS 2025, accessed on April 18, 2025, https://nips.cc/virtual/2024/poster/95935 
+[46] Chain-of-Thought Reasoning in Diffusion Language Models - NeurIPS 2025, accessed on April 18, 2025, https://nips.cc/virtual/2024/poster/95935 
 
-Diffusion Language Model with Query-Document Relevance for Query-Focused Summarization - ACL Anthology, accessed on April 18, 2025, https://aclanthology.org/2023.findings-emnlp.735.pdf
+[47] Diffusion Language Model with Query-Document Relevance for Query-Focused Summarization - ACL Anthology, accessed on April 18, 2025, https://aclanthology.org/2023.findings-emnlp.735.pdf
 
-SCALING DIFFUSION LANGUAGE MODELS VIA ADAPTATION FROM AUTOREGRESSIVE MODELS - OpenReview, accessed on April 18, 2025, https://openreview.net/pdf?id=j1tSLYKwg8
+[48] SCALING DIFFUSION LANGUAGE MODELS VIA ADAPTATION FROM AUTOREGRESSIVE MODELS - OpenReview, accessed on April 18, 2025, https://openreview.net/pdf?id=j1tSLYKwg8
 
-Chain-of-Thought Reasoning in Diffusion Language Models - NeurIPS 2025, accessed on April 18, 2025, https://neurips.cc/virtual/2024/poster/95935 
+[49] Chain-of-Thought Reasoning in Diffusion Language Models - NeurIPS 2025, accessed on April 18, 2025, https://neurips.cc/virtual/2024/poster/95935 
 
-kuleshov-group/awesome-discrete-diffusion-models - GitHub, accessed on April 18, 2025, https://github.com/kuleshov-group/awesome-discrete-diffusion-models 
+[50] kuleshov-group/awesome-discrete-diffusion-models - GitHub, accessed on April 18, 2025, https://github.com/kuleshov-group/awesome-discrete-diffusion-models 
 
-Meta-Diffu$B$: A Contextualized Sequence-to-Sequence Text Diffusion Model with Meta-Exploration | OpenReview, accessed on April 18, 2025, https://openreview.net/forum?id=NTWXVvIXJM 
+[51] Meta-Diffu$B$: A Contextualized Sequence-to-Sequence Text Diffusion Model with Meta-Exploration | OpenReview, accessed on April 18, 2025, https://openreview.net/forum?id=NTWXVvIXJM 
 
-Likelihood-Based Diffusion Language Models - OpenReview, accessed on April 18, 2025, https://openreview.net/pdf?id=e2MCL6hObn
+[52] Likelihood-Based Diffusion Language Models - OpenReview, accessed on April 18, 2025, https://openreview.net/pdf?id=e2MCL6hObn
 
-Unified Multimodal Discrete Diffusion - arXiv, accessed on April 18, 2025, https://arxiv.org/html/2503.20853v1 
+[53] Unified Multimodal Discrete Diffusion - arXiv, accessed on April 18, 2025, https://arxiv.org/html/2503.20853v1 
 
-arXiv:2410.14157v3 [cs.CL] 18 Feb 2025, accessed on April 18, 2025, https://arxiv.org/pdf/2410.14157
+[54] arXiv:2410.14157v3 [cs.CL] 18 Feb 2025, accessed on April 18, 2025, https://arxiv.org/pdf/2410.14157
 
-NeurIPS Poster Discrete-state Continuous-time Diffusion for Graph Generation, accessed on April 18, 2025, https://neurips.cc/virtual/2024/poster/94674 
+[55] NeurIPS Poster Discrete-state Continuous-time Diffusion for Graph Generation, accessed on April 18, 2025, https://neurips.cc/virtual/2024/poster/94674 
 
-NeurIPS Poster Discrete Flow Matching, accessed on April 18, 2025, https://neurips.cc/virtual/2024/poster/95902 
+[56] NeurIPS Poster Discrete Flow Matching, accessed on April 18, 2025, https://neurips.cc/virtual/2024/poster/95902 
 
-Structured Denoising Diffusion Models in Discrete State-Spaces - OpenReview, accessed on April 18, 2025, https://openreview.net/forum?id=h7-XixPCAL 
+[57] Structured Denoising Diffusion Models in Discrete State-Spaces - OpenReview, accessed on April 18, 2025, https://openreview.net/forum?id=h7-XixPCAL 
 
-Simple and Effective Masked Diffusion Language Models - NIPS papers, accessed on April 18, 2025, https://proceedings.neurips.cc/paper_files/paper/2024/file/eb0b13cc515724ab8015bc978fdde0ad-Paper-Conference.pdf
+[58] Simple and Effective Masked Diffusion Language Models - NIPS papers, accessed on April 18, 2025, https://proceedings.neurips.cc/paper_files/paper/2024/file/eb0b13cc515724ab8015bc978fdde0ad-Paper-Conference.pdf
 
-Beyond Autoregression: Discrete Diffusion for Complex Reasoning and Planning - arXiv, accessed on April 18, 2025, https://arxiv.org/html/2410.14157v3 
+[59] Beyond Autoregression: Discrete Diffusion for Complex Reasoning and Planning - arXiv, accessed on April 18, 2025, https://arxiv.org/html/2410.14157v3 
 
-Simplified and Generalized Masked Diffusion for Discrete Data - arXiv, accessed on April 18, 2025, https://arxiv.org/pdf/2406.04329
+[60] Simplified and Generalized Masked Diffusion for Discrete Data - arXiv, accessed on April 18, 2025, https://arxiv.org/pdf/2406.04329
 
-Simple and Effective Masked Diffusion Language Models - OpenReview, accessed on April 18, 2025, https://openreview.net/forum?id=L4uaAR4ArM&referrer=%5Bthe%20profile%20of%20Volodymyr%20Kuleshov%5D(%2Fprofile%3Fid%3D~Volodymyr_Kuleshov1)
+[61] Simple and Effective Masked Diffusion Language Models - OpenReview, accessed on April 18, 2025, https://openreview.net/forum?id=L4uaAR4ArM&referrer=%5Bthe%20profile%20of%20Volodymyr%20Kuleshov%5D(%2Fprofile%3Fid%3D~Volodymyr_Kuleshov1)
 
-Scaling up Masked Diffusion Models on Text - OpenReview, accessed on April 18, 2025, https://openreview.net/forum?id=WNvvwK0tut 
+[62] Scaling up Masked Diffusion Models on Text - OpenReview, accessed on April 18, 2025, https://openreview.net/forum?id=WNvvwK0tut 
 
-Conditional [MASK] Discrete Diffusion Language Model - arXiv, accessed on April 18, 2025, https://arxiv.org/html/2411.06438v3 
+[63] Conditional [MASK] Discrete Diffusion Language Model - arXiv, accessed on April 18, 2025, https://arxiv.org/html/2411.06438v3 
 
-DiffLM: Controllable Synthetic Data Generation via Diffusion Language Models, accessed on April 18, 2025, https://openreview.net/forum?id=fRmfDqZ2yq 
+[64] DiffLM: Controllable Synthetic Data Generation via Diffusion Language Models, accessed on April 18, 2025, https://openreview.net/forum?id=fRmfDqZ2yq 
 
-Discrete-state Continuous-time Diffusion for Graph Generation - NIPS papers, accessed on April 18, 2025, https://proceedings.neurips.cc/paper_files/paper/2024/file/91813e5ddd9658b99be4c532e274b49c-Paper-Conference.pdf
+[65] Discrete-state Continuous-time Diffusion for Graph Generation - NIPS papers, accessed on April 18, 2025, https://proceedings.neurips.cc/paper_files/paper/2024/file/91813e5ddd9658b99be4c532e274b49c-Paper-Conference.pdf
 
-PLANNER: Generating Diversified Paragraph via Latent Language Diffusion Model, accessed on April 18, 2025, https://proceedings.neurips.cc/paper_files/paper/2023/file/fdba5e0a9b57fce03e89cc0cad0a24e9-Paper-Conference.pdf
+[66] PLANNER: Generating Diversified Paragraph via Latent Language Diffusion Model, accessed on April 18, 2025, https://proceedings.neurips.cc/paper_files/paper/2023/file/fdba5e0a9b57fce03e89cc0cad0a24e9-Paper-Conference.pdf
 
-Meta-DiffuB: A Contextualized Sequence-to-Sequence Text Diffusion Model with Meta-Exploration - NIPS papers, accessed on April 18, 2025, https://papers.nips.cc/paper_files/paper/2024/file/91d193b65d0b120d29503590827de1ea-Paper-Conference.pdf
+[67] Meta-DiffuB: A Contextualized Sequence-to-Sequence Text Diffusion Model with Meta-Exploration - NIPS papers, accessed on April 18, 2025, https://papers.nips.cc/paper_files/paper/2024/file/91d193b65d0b120d29503590827de1ea-Paper-Conference.pdf
 
-Do diffusion models take a long time to train? - AI Stack Exchange, accessed on April 18, 2025, https://ai.stackexchange.com/questions/43012/do-diffusion-models-take-a-long-time-to-train 
+[68] Do diffusion models take a long time to train? - AI Stack Exchange, accessed on April 18, 2025, https://ai.stackexchange.com/questions/43012/do-diffusion-models-take-a-long-time-to-train 
 
-GUIDE: Guidance-based Incremental Learning with Diffusion Models - arXiv, accessed on April 18, 2025, https://arxiv.org/html/2403.03938v1 
+[69] GUIDE: Guidance-based Incremental Learning with Diffusion Models - arXiv, accessed on April 18, 2025, https://arxiv.org/html/2403.03938v1 
 
-CEV-LM: Controlled Edit Vector Language Model for Shaping Natural Language Generations - ACL Anthology, accessed on April 18, 2025, https://aclanthology.org/2024.eacl-long.80.pdf
+[70] CEV-LM: Controlled Edit Vector Language Model for Shaping Natural Language Generations - ACL Anthology, accessed on April 18, 2025, https://aclanthology.org/2024.eacl-long.80.pdf
 
-Daily Papers - Hugging Face, accessed on April 18, 2025, https://huggingface.co/papers?q=LM 
+[71] Daily Papers - Hugging Face, accessed on April 18, 2025, https://huggingface.co/papers?q=LM 
 
-Intelligent Artistic Typography: A Comprehensive Review of Artistic Text Design and Generation - arXiv, accessed on April 18, 2025, https://arxiv.org/html/2407.14774v1
+[72] Intelligent Artistic Typography: A Comprehensive Review of Artistic Text Design and Generation - arXiv, accessed on April 18, 2025, https://arxiv.org/html/2407.14774v1
 
