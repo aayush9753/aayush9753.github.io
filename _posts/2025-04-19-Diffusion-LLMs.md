@@ -23,15 +23,21 @@ q(x_t \mid x_{t-1}) = \mathcal{N}(x_t; \sqrt{1-\beta_t}x_{t-1}, \beta_t \mathbf{
 
 Here, $x_t$ represents the state (noisy data sample) at time step $t$, $\mathcal{N}(\cdot;\mu,\Sigma)$ denotes a Gaussian distribution with mean $\mu$ and covariance $\Sigma$, $\mathbf{I}$ is the identity matrix, and $\{\beta_t\}_{t=1}^T$ is a pre-defined variance schedule.$^3$ The values $\beta_t$ are typically small positive numbers $(0<\beta_t<1)$ that control the amount of noise added at each step. The variance schedule is a crucial design choice; common schedules include linear increases in $\beta_t$ (e.g., from $10^{-4}$ to $0.02$ $^1$) or cosine schedules.$^3$ These schedules ensure that the data is gradually corrupted. While typically fixed, the noise schedule itself can potentially be learned.$^1$ The Markov property implies that the state $x_t$ depends only on the immediately preceding state $x_{t-1}$.$^3$ The joint probability of the entire sequence of noisy samples given the initial data is the product of these transitions:
 
-q(x_{1:T} \mid x_0) = \prod_{t=1}^T q(x_t \mid x_{t-1}) ^3
+q(x_{1:T} \mid x_0) = \prod_{t=1}^T q(x_t \mid x_{t-1})
+
+$^3$
 
 A significant property of this Gaussian forward process is that we can sample $x_t$ at any arbitrary time step $t$ directly from the initial data $x_0$ in closed form, without iterating through all intermediate steps.$^3$ By defining $\alpha_t=1-\beta_t$ and $\bar{\alpha}_t=\prod_{i=1}^t \alpha_i$ $^5$, the conditional distribution $q(x_t|x_0)$ is also Gaussian:
 
-$$q(x_t|x_0) = \mathcal{N}(x_t; \sqrt{\bar{\alpha}_t}x_0, (1-\bar{\alpha}_t)\mathbf{I}) ^3$$
+$$q(x_t|x_0) = \mathcal{N}(x_t; \sqrt{\bar{\alpha}_t}x_0, (1-\bar{\alpha}_t)\mathbf{I})$$
+
+$^3$
 
 This allows for efficient training, as we can directly compute a noisy version $x_t$ for any $t$ using the reparameterization trick: sample a standard Gaussian noise vector $\epsilon \sim \mathcal{N}(0,\mathbf{I})$ and compute:
 
-$$x_t = \sqrt{\bar{\alpha}_t}x_0 + \sqrt{1-\bar{\alpha}_t}\epsilon ^3$$
+$$x_t = \sqrt{\bar{\alpha}_t}x_0 + \sqrt{1-\bar{\alpha}_t}\epsilon$$
+
+$^3$
 
 As the number of steps $T$ becomes large, $\bar{\alpha}_T = \prod_{t=1}^T (1-\beta_t)$ approaches zero. Consequently, the distribution of $x_T$ converges to an isotropic Gaussian distribution $\mathcal{N}(0,\mathbf{I})$, effectively erasing all information about the original data $x_0$.$^5$
 
@@ -41,7 +47,9 @@ The generative power of diffusion models lies in learning to reverse the forward
 
 Therefore, we parameterize the reverse process using a neural network with parameters $\theta$. This network learns to approximate the reverse transitions with conditional Gaussian distributions:
 
-$$p_\theta(x_{t-1}|x_t) = \mathcal{N}(x_{t-1};\mu_\theta(x_t,t),\Sigma_\theta(x_t,t)) ^3$$
+$$p_\theta(x_{t-1}|x_t) = \mathcal{N}(x_{t-1};\mu_\theta(x_t,t),\Sigma_\theta(x_t,t))$$
+
+$^3$
 
 Here, $\mu_\theta(x_t,t)$ and $\Sigma_\theta(x_t,t)$ are the mean and covariance matrix of the Gaussian transition at time step $t$, predicted by the neural network given the current state $x_t$ and the time step $t$.
 
@@ -51,9 +59,13 @@ $$q(x_{t-1}|x_t,x_0) = \mathcal{N}(x_{t-1};\tilde{\mu}_t(x_t,x_0),\tilde{\beta}_
 
 where the mean $\tilde{\mu}_t$ and variance $\tilde{\beta}_t$ are functions of $x_t$, $x_0$, and the noise schedule parameters $\alpha_t$ and $\beta_t$:
 
-$$\tilde{\mu}_t(x_t,x_0) = \frac{\sqrt{\alpha_t}(1-\bar{\alpha}_{t-1})}{1-\bar{\alpha}_t}x_t + \frac{\sqrt{\bar{\alpha}_{t-1}}\beta_t}{1-\bar{\alpha}_t}x_0 ^{18}$$
+$$\tilde{\mu}_t(x_t,x_0) = \frac{\sqrt{\alpha_t}(1-\bar{\alpha}_{t-1})}{1-\bar{\alpha}_t}x_t + \frac{\sqrt{\bar{\alpha}_{t-1}}\beta_t}{1-\bar{\alpha}_t}x_0$$
 
-$$\tilde{\beta}_t = \frac{1-\bar{\alpha}_{t-1}}{1-\bar{\alpha}_t}\beta_t ^{18}$$
+$^{18}$
+
+$$\tilde{\beta}_t = \frac{1-\bar{\alpha}_{t-1}}{1-\bar{\alpha}_t}\beta_t$$
+
+$^{18}$
 
 The objective during training is to make the learned reverse transitions $p_\theta(x_{t-1}|x_t)$ closely match these true posterior transitions $q(x_{t-1}|x_t,x_0)$. The reverse process starts generation by sampling from a prior distribution $p(x_T)$, which is typically set to the standard Gaussian $\mathcal{N}(0,\mathbf{I})$ (matching the distribution reached by the forward process).$^5$ Then, it iteratively samples $x_{t-1}$ from $p_\theta(x_{t-1}|x_t)$ for $t=T,T-1,\ldots,1$, ultimately producing a generated sample $x_0$.$^5$
 
@@ -113,13 +125,17 @@ $L_0 = -\log p_\theta(x_0|x_1)$ represents the reconstruction likelihood of the 
 
 To optimize this objective, the learned mean $\mu_\theta(x_t,t)$ must be trained to predict the true posterior mean $\tilde{\mu}_t(x_t,x_0)$. A common and effective parameterization, proposed by Ho et al. (DDPM) $^{10}$, involves training the neural network, denoted $\epsilon_\theta(x_t,t)$, to predict the noise component $\epsilon$ that was added to $x_0$ to obtain $x_t$ via the relation $x_t = \sqrt{\bar{\alpha}_t}x_0 + \sqrt{1-\bar{\alpha}_t}\epsilon$.$^3$ The learned mean $\mu_\theta$ can then be expressed in terms of the predicted noise $\epsilon_\theta$:
 
-$$\mu_\theta(x_t,t) = \frac{1}{\sqrt{\alpha_t}}\left(x_t - \frac{\beta_t}{\sqrt{1-\bar{\alpha}_t}}\epsilon_\theta(x_t,t)\right) ^3$$ (Note: $\beta_t = 1-\alpha_t$)
+$$\mu_\theta(x_t,t) = \frac{1}{\sqrt{\alpha_t}}\left(x_t - \frac{\beta_t}{\sqrt{1-\bar{\alpha}_t}}\epsilon_\theta(x_t,t)\right)$$ 
+
+$^3$ (Note: $\beta_t = 1-\alpha_t$)
 
 The variance $\Sigma_\theta(x_t,t)$ is often kept fixed rather than learned, typically set to $\sigma_t^2\mathbf{I}$ where $\sigma_t^2$ is either $\beta_t$ or the true posterior variance $\tilde{\beta}_t$.$^5$ Fixing the variance simplifies the model and training. However, learning the variance is also possible and can sometimes improve likelihoods.$^1$
 
 Substituting the noise prediction parameterization into the KL divergence term $L_{t-1}$ leads to a loss term involving the squared error between the true noise $\epsilon$ and the predicted noise $\epsilon_\theta$, weighted by terms depending on the noise schedule.$^5$ However, Ho et al. $^{10}$ empirically found that a simplified objective function, which essentially ignores the complex weighting factors from the VLB and directly minimizes the Mean Squared Error (MSE) between the true and predicted noise, performs very well, often yielding better sample quality.$^3$ This simplified loss is widely used:
 
-$$L_\text{simple} = \mathbb{E}_{t \sim \mathcal{U}(1, T), \mathbf{x}_0 \sim q(\mathbf{x}_0), \boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})} \Big[\|\boldsymbol{\epsilon} - \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t)\|^2 \Big] ^3$$
+$$L_\text{simple} = \mathbb{E}_{t \sim \mathcal{U}(1, T), \mathbf{x}_0 \sim q(\mathbf{x}_0), \boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})} \Big[\|\boldsymbol{\epsilon} - \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t)\|^2 \Big]$$
+
+$^3$
 
 The training algorithm typically proceeds as follows (e.g., Algorithm 1 in DDPM $^3$):
 
@@ -153,14 +169,18 @@ The generation algorithm (e.g., Algorithm 2 in DDPM $^3$) proceeds as follows:
    a. Sample a random Gaussian noise vector $z \sim \mathcal{N}(0,\mathbf{I})$ (if $t>1$; set $z=0$ if $t=1$).
    b. Use the trained neural network to predict the noise component $\epsilon_\theta(x_t,t)$ based on the current state $x_t$ and time step $t$.
    c. Calculate the mean of the reverse transition $p_\theta(x_{t-1}|x_t)$ using the predicted noise: 
-      $$\mu_\theta(x_t,t) = \frac{1}{\sqrt{\alpha_t}}\left(x_t - \frac{\beta_t}{\sqrt{1-\bar{\alpha}_t}}\epsilon_\theta(x_t,t)\right) ^3$$
+      $$\mu_\theta(x_t,t) = \frac{1}{\sqrt{\alpha_t}}\left(x_t - \frac{\beta_t}{\sqrt{1-\bar{\alpha}_t}}\epsilon_\theta(x_t,t)\right)$$
+      
+      $^3$
    d. Determine the variance $\sigma_t^2$ for the reverse step. Common choices are $\sigma_t^2 = \beta_t$ or $\sigma_t^2 = \tilde{\beta}_t = \frac{1-\bar{\alpha}_t}{1-\bar{\alpha}_{t-1}}\beta_t$.$^5$
    e. Sample the state at the previous time step $x_{t-1}$ from the Gaussian distribution: 
-      $$x_{t-1} = \mu_\theta(x_t,t) + \sigma_t z ^3$$
+      $$x_{t-1} = \mu_\theta(x_t,t) + \sigma_t z$$
+      
+      $^3$
 
 3. **Output**: After iterating through all time steps, the final state $x_0$ is the generated sample from the model. $^5$
 
-A crucial characteristic of this sampling process is its iterative nature. It typically requires evaluating the neural network once for each time step t from T down to 1. Since T is often large (e.g., 1000 or even more 1), this sequential evaluation leads to slow sampling speeds compared to models that generate samples in a single forward pass, like standard GANs or VAEs.1 This high computational cost during inference is a primary drawback of diffusion models and represents a major bottleneck for their practical application, especially in latency-sensitive scenarios. Consequently, significant research effort has been dedicated to developing techniques for accelerating the sampling process. These include designing more efficient deterministic samplers based on Ordinary Differential Equation (ODE) formulations (like DDIM - Denoising Diffusion Implicit Models) 19, using advanced SDE solvers 19, learning optimized or shorter sampling schedules 1, knowledge distillation to train faster "student" models 4, and exploring non-Markovian sampling approaches.38 The goal is to reduce the number of required network evaluations (sampling steps) significantly without substantially degrading the quality of the generated samples.
+A crucial characteristic of this sampling process is its iterative nature. It typically requires evaluating the neural network once for each time step $t$ from $T$ down to 1. Since $T$ is often large (e.g., 1000 or even more $^1$), this sequential evaluation leads to slow sampling speeds compared to models that generate samples in a single forward pass, like standard GANs or VAEs.$^1$ This high computational cost during inference is a primary drawback of diffusion models and represents a major bottleneck for their practical application, especially in latency-sensitive scenarios. Consequently, significant research effort has been dedicated to developing techniques for accelerating the sampling process. These include designing more efficient deterministic samplers based on Ordinary Differential Equation (ODE) formulations (like DDIM - Denoising Diffusion Implicit Models) $^{19}$, using advanced SDE solvers $^{19}$, learning optimized or shorter sampling schedules $^1$, knowledge distillation to train faster "student" models $^4$, and exploring non-Markovian sampling approaches.$^{38}$ The goal is to reduce the number of required network evaluations (sampling steps) significantly without substantially degrading the quality of the generated samples.
 
 ## Section 3: Adapting Diffusion Models for Discrete Data (Text)
 
