@@ -2,7 +2,7 @@
 layout: post
 title: Structure, Layout and Markdown
 category: [monthly]
-date: 0-0-0
+date: 2025-07-04
 ---
 
 # Structure, Layout and Markdown with the soul motivation of maintaining this self-notes website
