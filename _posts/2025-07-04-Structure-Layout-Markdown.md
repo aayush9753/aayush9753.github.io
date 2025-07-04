@@ -1,11 +1,9 @@
 ---
 layout: post
-title: Structure, Layout and Markdown
+title: Structure, Layout and Markdown for maintaining this self-notes website
 category: [monthly]
 date: 2025-07-04
 ---
-
-# Structure, Layout and Markdown with the soul motivation of maintaining this self-notes website
 
 # Markdown
 
