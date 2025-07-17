@@ -12,7 +12,7 @@ permalink: /about
 
 ## Hey there, I'm Aayush!
 
-Welcome to my digital space! I'm a **machine learning researcher** with a passion for teaching machines to understand and create audio. This is where I share my thoughts, experiments, discoveries, and everything that doesn't fit into a formal research paper.
+Welcome to my digital space! I'm a **machine learning researcher** with a passion for making machines speak. This is where I share my thoughts, experiments, discoveries, and everything that doesn't fit into a formal research paper.
 
 Think of this as my **public notebook** - a mix of technical deep-dives, project walkthroughs, personal notes, and honest reflections on the world of ML.
 
