@@ -12,47 +12,47 @@ entries:
       - title: github
         url: https://github.com/aayush9753
 
-  - title: by category
+  - title: Blogs by category
     entries:
-    - title: llm
+    - title: Journeys - Will keep on updating this as I go through
       post_list:
-        category: llm
-        limit: 2
-    - title: speech
+        category: journey
+        limit: 5
+    - title: Speech - Audio ML
       post_list:
         category: speech
         limit: 2
-    - title: learning-series
+    - title: LMs - Data, Model, Training, and Inference
       post_list:
-        category: learning-series
+        category: llm
+        limit: 5
+    - title: Miscellaneous & Fun
+      post_list:
+        category: random
+        limit: 5
+    - title: Diffusion
+      post_list:
+        category: diffusion
         limit: 5
   
-  - title: all posts
+  - title: Recent Posts
     post_list:
-      limit: 7
+      limit: 5
       show_more: true
       show_more_text: older posts..
       show_more_url: archive.html
 
-  - title: selected work samples
+  - title: Projects & Work
     entries:
-      - title: whisperX-Smart - Improved Silero VAD, language detection, for more accurate speech transcription.
+      - title: whisperX-Smart
         url: https://github.com/aayush9753/whisperX-Smart
-      - title: Indri - A series of multilingual audio models that can do TTS, ASR, and audio continuation. It currently supports English and Hindi.
+      - title: Indri - Audio models
         url: https://github.com/indri-voice/indri
-      - title: TRANS-KBLSTM - An External Knowledge Enhanced Transformer BiLSTM model for Tabular Reasoning
+      - title: TRANS-KBLSTM
         url: https://trans-kblstm.github.io/
-      - title: Age_and_Gender_Detection_through_CCTV_Videos
+      - title: Age and Gender Detection through CCTV Videos
         url: https://github.com/Umang1815/Age_and_Gender_Detection_through_CCTV_Videos
-      - title: Traffic Sign Recognition and AutoML - An Artificial Intelligence tool that predicts traffic signs using various pre-trained models and allows users to manipulate datasets.
+      - title: Traffic Sign Recognition and AutoML
         url: https://github.com/aayush9753/Bosch
-      - title: ColorIt - Image Colorization using GANs
+      - title: ColorIt (Image Colorization using GANs)
         url: https://github.com/aayush9753/ColorIt
-
-  # - title: diy-rouductivity
-  #   post_list:
-  #     category: diy-productivity
-  #     limit: 2
-
-  - title: all categories
-    url: ./category.html
