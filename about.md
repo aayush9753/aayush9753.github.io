@@ -1,7 +1,7 @@
 ---
 layout: post
 title: About me
-date: 2025-05-21
+date: 2025-07-17
 permalink: /about
 ---
 # About Me

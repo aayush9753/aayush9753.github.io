@@ -2,7 +2,7 @@
 layout: post
 title: Why this website
 category: introduction
-date: 2025-05-21
+date: 2025-07-17
 ---
 
 # Why This Website Exists

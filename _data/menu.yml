@@ -5,25 +5,13 @@ entries:
 
   - title: info
     entries:
-      - title: motivation
-        url: ./motivation.html
       - title: about me
         url: ./about.html
+      - title: motivation
+        url: ./motivation.html
       - title: github
         url: https://github.com/aayush9753
 
-  - title: all posts
-    post_list:
-      limit: 7
-      show_more: true
-      show_more_text: older posts..
-      show_more_url: archive.html
-
-  - title: selected work samples
-    entries:
-      - title: whisperX-Smart - Improved Silero VAD, language detection, for more accurate speech transcription.
-        url: https://github.com/aayush9753/whisperX-Smart
-  
   - title: by category
     entries:
     - title: llm
@@ -38,11 +26,33 @@ entries:
       post_list:
         category: learning-series
         limit: 5
+  
+  - title: all posts
+    post_list:
+      limit: 7
+      show_more: true
+      show_more_text: older posts..
+      show_more_url: archive.html
 
-    # - title: diy-rouductivity
-    #   post_list:
-    #     category: diy-productivity
-    #     limit: 2
+  - title: selected work samples
+    entries:
+      - title: whisperX-Smart - Improved Silero VAD, language detection, for more accurate speech transcription.
+        url: https://github.com/aayush9753/whisperX-Smart
+      - title: Indri - A series of multilingual audio models that can do TTS, ASR, and audio continuation. It currently supports English and Hindi.
+        url: https://github.com/indri-voice/indri
+      - title: TRANS-KBLSTM - An External Knowledge Enhanced Transformer BiLSTM model for Tabular Reasoning
+        url: https://trans-kblstm.github.io/
+      - title: Age_and_Gender_Detection_through_CCTV_Videos
+        url: https://github.com/Umang1815/Age_and_Gender_Detection_through_CCTV_Videos
+      - title: Traffic Sign Recognition and AutoML - An Artificial Intelligence tool that predicts traffic signs using various pre-trained models and allows users to manipulate datasets.
+        url: https://github.com/aayush9753/Bosch
+      - title: ColorIt - Image Colorization using GANs
+        url: https://github.com/aayush9753/ColorIt
 
-    - title: all categories
-      url: ./category.html
+  # - title: diy-rouductivity
+  #   post_list:
+  #     category: diy-productivity
+  #     limit: 2
+
+  - title: all categories
+    url: ./category.html
