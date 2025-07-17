@@ -5,7 +5,46 @@ category: diffusion
 date: 2025-07-17
 ---
 
-> Nakkiran, Preetum, Arwen Bradley, Hattie Zhou, and Madhu Advani. “Step-by-Step Diffusion: An Elementary Tutorial.” arXiv, June 23, 2024. [https://doi.org/10.48550/arXiv.2406.08929](https://arxiv.org/abs/2406.08929).
+> Nakkiran, Preetum, Arwen Bradley, Hattie Zhou, and Madhu Advani. "Step-by-Step Diffusion: An Elementary Tutorial." arXiv, June 23, 2024. [https://doi.org/10.48550/arXiv.2406.08929](https://arxiv.org/abs/2406.08929).
+
+## Table of Contents
+
+1. **[Fundamental of Diffusion](#1-fundamental-of-diffusion)**
+   - [1.1 Gaussian Diffusion](#11-gaussian-diffusion)
+   - [1.2 Diffusions in the Abstract](#12-diffusions-in-the-abstract)
+   - [1.3 Discretisation](#13-discretisation)
+
+2. **[Stochastic Sampling: DDPM](#2-stochastic-sampling-ddpm)**
+   - [2.1 Correctness of DDPM](#21-correctness-of-ddpm-look-in-paper-for-the-proof)
+   - [2.2 Algorithms](#22-algorithms)
+   - [2.3 Variance Reduction: Predicting x₀](#23-variance-reduction-predicting-x_0)
+
+3. **[Deterministic Sampling: DDIM](#3-deterministic-sampling-ddim)**
+   - [Algorithm 2: Deterministic Reverse Sampler](#algorithm-2-deterministic-reverse-sampler-ddim-like)
+   - [3.1 Case 1: Single Point](#31-case-1-single-point)
+   - [3.2 Velocity Fields and Gases](#32-velocity-fields-and-gases)
+   - [3.6 Discussion: DDPM vs DDIM](#36-discussion-ddpm-vs-ddim)
+   - [3.7 Remarks on Generalization](#37-remarks-on-generalization)
+
+4. **[Flow Matching](#4-flow-matching)**
+   - [The Two-Step Construction from DDIM](#the-two-step-construction-from-ddim)
+   - [Why This Matters](#why-this-matters)
+   - [4.1 Flows](#41-flows)
+   - [4.2 Pointwise Flows](#42-pointwise-flows)
+   - [4.3 Marginal Flows](#43-marginal-flows)
+   - [4.4 A Simple Choice of Pointwise Flow](#44-a-simple-choice-of-pointwise-flow)
+   - [4.5 Flow Matching](#45-flow-matching)
+
+5. **[Diffusion in Practice](#5-diffusion-in-practice)**
+   - [Samplers in Practice](#samplers-in-practice)
+   - [Noise Schedules](#noise-schedules)
+   - [Likelihood Interpretations and VAEs](#likelihood-interpretations-and-vaes)
+   - [Parametrization: The x₀ / ε / v-Prediction Wars](#parametrization-the-x_0--ε--v-prediction-wars)
+   - [The Error Landscape: What Actually Goes Wrong](#the-error-landscape-what-actually-goes-wrong)
+
+6. **[Further Reading and Resources](#further-reading-and-resources)**
+
+---
 
 # 1. Fundamental of Diffusion
 
@@ -13,7 +52,7 @@ date: 2025-07-17
 
 i.i.d. samples: Independent and identically distributed samples
 
-- Each sample was drawn independently and all samples come from same underlying distribution p*.
+- Each sample was drawn independently and all samples come from same underlying distribution $$p^*$$.
 
 **Example:** We have a training set of 10,000 dog photos:
 
