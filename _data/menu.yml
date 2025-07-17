@@ -34,6 +34,10 @@ entries:
       post_list:
         category: speech
         limit: 2
+    - title: learning-series
+      post_list:
+        category: learning-series
+        limit: 5
 
     # - title: diy-rouductivity
     #   post_list:
