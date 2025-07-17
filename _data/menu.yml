@@ -30,10 +30,8 @@ entries:
       post_list:
         category: random
         limit: 5
-    - title: Diffusion
-      post_list:
-        category: diffusion
-        limit: 5
+  - title: all categories
+    url: ./category.html
   
   - title: Recent Posts
     post_list:
