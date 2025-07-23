@@ -13,11 +13,16 @@ I am studying diffusion models from scratch, diving deep into the mathematical f
 
 ### 1. [Step-by-Step Diffusion: An Elementary Tutorial](https://aayush9753.github.io/step-by-step-diffusion-an-elementary-tutorial.html)
 
-This tutorial covers the fundamentals of diffusion models including:
+This covers the fundamentals of diffusion models including:
 - How diffusion models work by gradually adding and removing noise
 - DDPM (stochastic sampling) and DDIM (deterministic sampling) algorithms
 - Flow matching as a generalization beyond Gaussian noise
 - Practical implementation details and best practices
+
+### 2. [Denoising Diffusion Probabilistic Models](https://aayush9753.github.io/denoising-diffusion-probabilistic-models.html)
+
+- Covers a Image generation model created using diffusion.
+- Focuses on Loss for the training and mathemetical derivations.
 
 ---
 
