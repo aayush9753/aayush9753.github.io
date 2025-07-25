@@ -11,19 +11,14 @@ I am studying text to audio models with more focus towards Music Generation mode
 
 # Text-To-Music Models
 
-### 1. [Step-by-Step Diffusion: An Elementary Tutorial](https://aayush9753.github.io/step-by-step-diffusion-an-elementary-tutorial.html)
+### 1. [Mustango: Toward Controllable Text-to-Music Generation](https://aayush9753.github.io/mustango-toward-controllable-text-to-music-generation.html)
+Mustango is a diffusion-based text-to-music model that enables structured control over **chords, beats, tempo,** and **key** directly from natural-language prompts.
+It covers:
+- Fundamentals of Music
+- MuNet: Music-Aware UNet Denoiser
+- MusicBench: A Richly Augmented Dataset - built on top of MusicCaps. (Over 52000 samples)
 
-This covers the fundamentals of diffusion models including:
-- How diffusion models work by gradually adding and removing noise
-- DDPM (stochastic sampling) and DDIM (deterministic sampling) algorithms
-- Flow matching as a generalization beyond Gaussian noise
-- Practical implementation details and best practices
-
-### 2. [Denoising Diffusion Probabilistic Models](https://aayush9753.github.io/denoising-diffusion-probabilistic-models.html)
-
-- Covers a Image generation model created using diffusion.
-- Focuses on Loss for the training and mathemetical derivations.
 
 ---
 
-*More blog posts on diffusion models coming soon as I continue my learning journey...*
+*More blog posts coming soon as I continue my learning journey...*

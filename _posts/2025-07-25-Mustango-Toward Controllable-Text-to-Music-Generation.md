@@ -10,6 +10,7 @@ date: 2025-07-25
 [Code](https://github.com/AMAAI-Lab/mustango)
 
 ## Table of Contents
+- [Fundamentals of Music](#fundamentals-of-music)
 - [MusicBench](#musicbench)
   - [Feature Extraction](#feature-extraction)
   - [Description Enrichment](#description-enrichment)
@@ -21,7 +22,6 @@ date: 2025-07-25
   - [Training Details](#training-details)
 - [Inference](#inference)
 - [Experiments](#experiments)
-
 **Overview:**
 
 Mustango is a diffusion-based text-to-music generation system that goes beyond general text conditioning. It introduces fine-grained control over **musical attributes** such as **chords, beats, tempo,** and **key**, enabling more structured and musically meaningful audio synthesis from natural language prompts.
@@ -50,9 +50,8 @@ To train controllable models, the authors introduce **MusicBench**, a dataset bu
 - **Data scarcity**: High-quality paired text-music datasets are limited and often lack rich musical annotations.
 - **Representational depth**: Most captions lack structural and harmonic detail. Mustango tackles this by learning to infer and control these aspects from text.
 
+# Fundamentals of Music
 <div style="border: 2px solid #ccc; border-radius: 10px; padding: 20px; background-color: #f9f9f9; font-family: sans-serif; line-height: 1.6">
-
-<h1>Fundamentals of Music</h1>
 
 <p>To understand musical features, we will use <strong>"We Will Rock You"</strong> by Queen as our example, assuming we have no prior music knowledge.</p>
 
