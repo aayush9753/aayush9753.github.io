@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Text-to-Audio-Models
-category: journey, tta
+category: journey
 date: 2025-07-25
 ---
 
