@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Mustango: Toward Controllable Text-to-Music Generation"
-category: speech
+category: speech, music-generation
 date: 2025-07-25
 ---
 
