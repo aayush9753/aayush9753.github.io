@@ -16,32 +16,23 @@ Mustango is a diffusion-based text-to-music model that enables structured contro
 
 **MusicBench — Dataset Pipeline**
 1. **Seed corpus:** 5521 MusicCaps clips (10 s + captions).
-2. **Clean‑up:** remove missing audio → 5479 clips.
-3. **Split:** TrainA / TestA.
-4. **Control sentences:** append 0–4 beat/chord/key/tempo lines → TrainB / TestB.
-5. **Paraphrase:** ChatGPT rephrasing → TrainC (85 % paraphrased).
-6. **Filter:** drop “poor‑quality/low‑fidelity” captions → 3413 HQ clips.
-7. **11× augment:** ±1‑3 semitones, ±5–25 % speed, crescendo/decrescendo volume → ≈37 k new samples.
-8. **Merge:** TrainA + B + C + augments → **52 768** training items; tests = TestA, TestB, FMACaps.
+2. **Control sentences:** append 0–4 beat/chord/key/tempo lines
+3. **Paraphrase:** ChatGPT rephrasing
+4. **Filter:** drop “poor‑quality/low‑fidelity” captions
+5. **11× augment:** ±1‑3 semitones, ±5–25 % speed, crescendo/decrescendo volume → ≈37 k new samples.
 
 **Mustango Model**
 1. **Latent space:** AudioLDM VAE → latent z.
-2. **Diffusion:** 200‑step Gaussian forward / reverse process.
-3. **MuNet denoiser:** UNet + hierarchical cross‑attention.
-   * Inputs: FLAN‑T5 text emb; beat & chord encodings.
-4. **Beat encoder:** one‑hot type + time sinusoid.
-5. **Chord encoder:** root FME + quality + inversion + time sinusoid.
-6. **Training tricks:** 5% unconditional, 5% single‑modality drop, 20‑50% sentence masking; AdamW, batch 32.
-7. **Inference helpers:**
+2. **MuNet denoiser:** UNet + hierarchical cross‑attention.
+   * Inputs: FLAN‑T5 text emb; beat & chord encodings. (**Beat encoder** and **Chord encoder**)
+3. **Inference helpers:**
    * DeBERTa beat predictor (meter + intervals).
    * FLAN‑T5 chord predictor (time‑stamped chords).
-   * Classifier‑free guidance scale = 3.
-8. **Output:** 10‑s waveform obeying tempo, key, chords, beats when provided; graceful fallback when not.
+4. **Output:** 10‑s waveform obeying tempo, key, chords, beats when provided; graceful fallback when not.
 
 
 ### 2. [Noise2Music: Text-conditioned Music Generation with Diffusion Models](https://aayush9753.github.io/noise2music-text-conditioned-music-generation-with-diffusion-models.html)
 Generate a 30-second, 24 kHz stereo music clip from a plain-language prompt.
-### Noise2Music — Key Take‑aways in Bullet Form
 
 **Training‑Data Pipeline**
 1. **Raw audio pool:** 6.8 M full‑length tracks → chopped into 30 s clips (\~340 k h).
@@ -64,6 +55,34 @@ Generate a 30-second, 24 kHz stereo music clip from a plain-language prompt.
 | **Super‑Res Cascader** | *16 kHz → 24 kHz audio*         | Restore full bandwidth.  | No text conditioning; lightweight U‑Net.                                            |
 
 > **Spectrogram path** (alt): parallel generator + vocoder pair that works in log‑mel space; cheaper but less interpretable.
+
+### 3. [Stable Audio - Fast Timing-Conditioned Latent Audio Diffusion](https://aayush9753.github.io/stable-audio.html)
+1. A **convolutional VAE** that efficiently compresses and reconstructs long stereo audio.
+2. It uses **latent diffusion**
+3. It adds **timing embeddings**.
+
+**Dataset Construction**
+1. **Collect** 806284 stereo tracks (≈ 19500 h) from **AudioSparx**.
+2. **Pre‑process audio**
+   * Resample to **44.1 kHz**, stereo.
+   * Slice / pad each file to a fixed **95.1 s** window (4 194 304 samples).
+3. **Build text prompts** from metadata *on‑the‑fly*
+   * Randomly sample descriptors (genre, mood, BPM, instruments).
+   * Emit either **free‑form** or **structured** text strings.
+4. **Final sets**
+   * Same corpus trains the **VAE**, **CLAP** (text encoder), and **latent diffusion U‑Net**.
+
+**Model Pipeline**
+
+| Stage                          | Key points                                                                                                                        |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| **1. VAE**     | 32× compression                                  |
+| **2. Text encoder (CLAPours)** | trained from scratch                             |
+| **3. Timing embeddings**       | seconds_start, seconds_total; concatenated with text features |
+| **4. Latent U‑Net diffusion**  | 907 M params;                  |
+| **5. Inference**               | DPMSolver++              |
+
+**Outcome:** 44.1 kHz stereo audio, up to 95 s, fast (latent) diffusion with precise duration control via timing conditioning.
 
 ---
 
