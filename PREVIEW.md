@@ -24,7 +24,8 @@ Images still render, just without auto-generated `srcset` sizes.
    - Framework preset: **None**
    - Build command: `bundle exec jekyll build`
    - Build output directory: `_site`
-   - (Ruby auto-detected from `.ruby-version` = 3.3.5)
+   - Environment variable: **`RUBY_VERSION` = `3.3.5`** (al-folio's Ruby; al-folio
+     gitignores `.ruby-version`, so set it here in the Pages build settings)
 5. Save & Deploy → open the `*.pages.dev` URL.
 
 If the build fails on `bundle install` complaining about a platform, the fix is
