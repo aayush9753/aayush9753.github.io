@@ -41,4 +41,4 @@ write-ups, gathered here as I prepare for PhD applications.
 
 **Interests:** audio &amp; speech foundation models · voice-to-voice systems · music generation · NLP &amp; knowledge-enhanced ML.
 
-<!-- TODO(Aayush): refine tone/details; swap prof_pic.jpg (currently your GitHub avatar) for a headshot. -->
+<!-- TODO(Aayush): refine tone/details. -->
