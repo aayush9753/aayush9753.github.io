@@ -1,14 +1,9 @@
 github_users:
-  - torvalds
-  - alshedivat
+  - aayush9753
 
 repo_description_lines_max: 2
 
 github_repos:
-  - alshedivat/al-folio
-  - jekyll/jekyll
-  - twbs/bootstrap
-  - jquery/jquery
-  - FortAwesome/Font-Awesome
-  - mathjax/MathJax
-  - jpswalsh/academicons
+  - aayush9753/aayush9753.github.io
+  # TODO(Aayush): list your notable repos here, e.g.:
+  # - aayush9753/whisperX-Smart

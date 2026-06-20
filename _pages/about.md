@@ -2,15 +2,16 @@
 layout: about
 title: about
 permalink: /
-subtitle: Machine Learning Researcher · Speech &amp; Audio · <a href='#'>Affiliation (placeholder)</a>
+subtitle: ML Researcher at <a href='https://www.sarvam.ai/'>Sarvam AI</a> · audio foundation models, voice-to-voice &amp; music generation
 
 profile:
   align: right
   image: prof_pic.jpg
   image_circular: false # crops the image to make it circular
   more_info: >
-    <p>Email: aayushsharma [at] sarvam.ai</p>
-    <p>Location (placeholder)</p>
+    <p>Machine Learning Researcher</p>
+    <p>Sarvam AI · India</p>
+    <p>aayushsharmajohn [at] gmail.com</p>
 
 selected_papers: true # includes a list of papers marked as "selected={true}"
 social: true # includes social icons at the bottom of the page
@@ -26,23 +27,18 @@ latest_posts:
   limit: 3
 ---
 
-<!-- PLACEHOLDER BIO — Aayush to refine. Adapted from the existing site's about page. -->
+I'm **Aayush Sharma**, a machine learning researcher at [Sarvam AI](https://www.sarvam.ai/),
+where I work on **audio foundation models**, **voice-to-voice (speech) systems**, and
+**music generation**. I'm drawn to the problem of getting machines to *listen* and *speak*
+naturally — and to the generative and representation-learning ideas that make that possible.
 
-Hi, I'm **Aayush** — a machine learning researcher working on making machines
-speak. My focus is speech and audio ML: text-to-speech, text-to-audio and
-music generation, and the diffusion / generative modeling that underpins them.
+My path into ML ran through a B.Tech in Biotechnology at **IIT Guwahati** (2019–2023),
+after which I built Indic speech and language systems in industry: Indic ASR and NER models,
+semantic voice-activity detection, and large language models. Along the way I picked up a
+soft spot for **knowledge-enhanced ML** — work that earned a Best Paper Award at DeeLIO @ ACL 2022.
+This site is my public research notebook: paper notes, technical deep-dives, and project
+write-ups, gathered here as I prepare for PhD applications.
 
-This site is my public research notebook: technical deep-dives, paper notes,
-and project write-ups. I'm currently preparing PhD applications, and this page
-collects my work, writing, and background in one place.
+**Interests:** audio &amp; speech foundation models · voice-to-voice systems · music generation · NLP &amp; knowledge-enhanced ML.
 
-> *"The best way to understand something is to build it, break it, and then build it better."*
-
-**Interests:** speech synthesis · text-to-audio &amp; music generation · diffusion models · representation learning.
-
-<!-- Placeholders to fill in:
-     - Affiliation + location (subtitle / more_info above)
-     - Headshot: add assets/img/prof_pic.jpg
-     - CV: add assets/pdf/cv.pdf (linked from the CV page)
-     - Publications: edit _bibliography/papers.bib
-     - Social links: set handles in _config.yml (scholar, github, linkedin, etc.) -->
+<!-- TODO(Aayush): refine tone/details; swap prof_pic.jpg (currently your GitHub avatar) for a headshot. -->

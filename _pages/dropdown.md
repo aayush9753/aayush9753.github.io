@@ -1,7 +1,7 @@
 ---
 layout: page
 title: submenus
-nav: true
+nav: false # hidden: al-folio demo dropdown
 nav_order: 8
 dropdown: true
 children:
