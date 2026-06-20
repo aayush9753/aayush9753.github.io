@@ -91,7 +91,7 @@ cv:
       - title: Best Paper Award — DeeLIO Workshop @ ACL 2022 (Dublin)
         awarder: DeeLIO @ ACL 2022
         date: 2022
-        summary: For "Trans-KBLSTM: An External Knowledge-enhanced Transformer BiLSTM for Tabular Reasoning."
+        summary: 'For "Trans-KBLSTM: An External Knowledge-enhanced Transformer BiLSTM for Tabular Reasoning."'
 
     Skills:
       - name: Research interests
